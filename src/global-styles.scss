@@ -1,0 +1,29 @@
+$primary-color: #FF8800;
+$secondary-color: #FFFFFF;
+$bg-color-primary: #000000EE;
+$bg-color-secondary: #00000000;
+
+button {
+  background: $bg-color-primary;
+  color: $primary-color;
+  border-color: $primary-color;
+}
+
+button:hover {
+  border-color: $secondary-color;
+  color: $secondary-color;
+  box-shadow: none;
+}
+
+button:active {
+  border-color: $secondary-color;
+  color: $primary-color;
+  box-shadow: none;
+  scale: 0.98;
+}
+
+button:focus {
+  border-color: $primary-color;
+  color: $primary-color;
+  box-shadow: none;
+}

@@ -27,6 +27,7 @@
   "scripts": {
     "build": "vite build",
     "dev": "vite",
+    "dev-debug": "vite --debug",
     "eslint": "eslint ."
   }
 }
