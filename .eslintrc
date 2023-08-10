@@ -35,6 +35,7 @@
         "status",
         "top"
       ]
-    }]
+    }],
+    "indent": ["error"] // or "warn" if you prefer
   }
 }

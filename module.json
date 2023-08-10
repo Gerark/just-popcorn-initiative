@@ -1,32 +1,32 @@
 {
-  "id": "just-popcorn-initiative",
-  "title": "Just - Popcorn Initiative",
-  "description": "Test",
-  "version": "0.0.0",
-  "authors": [
+  "id" : "just-popcorn-initiative",
+  "title" : "Just - Popcorn Initiative",
+  "description" : "Test",
+  "version" : "0.0.0",
+  "authors" : [
     {
-      "name": "Gerry"
+      "name" : "Gerry"
     }
   ],
-  "compatibility": {
-    "minimum": "10",
-    "verified": "11"
+  "compatibility" : {
+    "minimum" : "10",
+    "verified" : "11"
   },
-  "esmodules": [
+  "esmodules" : [
     "index.js"
   ],
-  "styles": [
+  "styles" : [
     "style.css"
   ],
-  "languages": [
+  "languages" : [
     {
-      "lang": "en",
-      "name": "English",
-      "path": "lang/en.json"
+      "lang" : "en",
+      "name" : "English",
+      "path" : "lang/en.json"
     }
   ],
-  "socket": false,
-  "protected": false,
-  "coreTranslation": false,
-  "library": false
+  "socket" : true,
+  "protected" : false,
+  "coreTranslation" : false,
+  "library" : false
 }
