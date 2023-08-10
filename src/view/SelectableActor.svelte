@@ -1,5 +1,5 @@
 <script>
-   import {createEventDispatcher} from "svelte";
+   import { createEventDispatcher } from "svelte";
 
    export let name;
    export let icon;
@@ -7,12 +7,14 @@
 
    const dispatch = createEventDispatcher();
 
-   function onActorSelected() {
-      dispatch("selected")
+   function onActorSelected()
+   {
+      dispatch("selected");
    }
 </script>
 
-<div class="combatant-item" class:selected={isSelected} class:unselected={!isSelected} on:keydown={onActorSelected} on:click={onActorSelected}>
+<div class="combatant-item" class:selected={isSelected} class:unselected={!isSelected} on:keydown={onActorSelected}
+     on:click={onActorSelected}>
    <img class="combatant-icon" src="{icon}" alt="{icon}"/>
    <div class="combatant-name">{name}</div>
 </div>
@@ -22,12 +24,11 @@
       max-width: 64px;
       width: auto;
       height: auto;
-      display:inline-block;
-      border:1px solid #CCC;
+      display: inline-block;
+      border: 1px solid #CCC;
       border-radius: 10px;
-      box-shadow: 0 0 5px -1px rgba(0,0,0,0.2);
-      cursor:pointer;
-      vertical-align:middle;
+      cursor: pointer;
+      vertical-align: middle;
       padding: 5px;
       text-align: center;
    }
@@ -38,22 +39,25 @@
    }
 
    .selected {
-      border:2px solid $primary-color;
+      border: 2px solid $primary-color;
       animation: zoom-in 0.1s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
    }
 
    .combatant-item:active {
-      border:1px solid $primary-color;
+      border: 1px solid $primary-color;
    }
+
    .combatant-item:hover:not(.selected) {
-      border:1px solid $secondary-color;
+      border: 1px solid $secondary-color;
       filter: none;
       animation: zoom-in-half 0.1s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
    }
+
    .combatant-icon {
       width: auto;
       height: auto;
    }
+
    .combatant-name {
       color: white;
       font-size: 12px;
@@ -61,16 +65,19 @@
       text-overflow: ellipsis;
       white-space: nowrap;
    }
+
    @keyframes zoom-in {
       100% {
-         transform: scale(1.2);
+         transform: scale(1.05);
       }
    }
+
    @keyframes zoom-in-half {
       100% {
          transform: scale(1.0);
       }
    }
+
    @keyframes zoom-out {
       100% {
          transform: scale(0.95);

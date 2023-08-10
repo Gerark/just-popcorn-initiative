@@ -2,9 +2,10 @@
    import { getContext } from 'svelte';
    import { EmptyApplicationShell } from '#runtime/svelte/component/core';
    import { draggable } from '#runtime/svelte/store/position';
-   import SelectableActor from './SelectableActor.svelte';
-   import SimpleActor from "./SimpleActor.svelte";
    import { subscribeToCloseRequestWindow } from "../ModuleStore.js";
+   import CombatantList from "./CombatantList.svelte";
+   import CombatantGrid from "./CombatantGrid.svelte";
+   import CombatantSelectionToolbox from "./CombatantSelectionToolbox.svelte";
 
    export let elementRoot;
 
@@ -75,13 +76,19 @@
       selectableCombatants = selectableCombatants;
    }
 
-   function _onCombatantSelected(combatant)
+   function _onCombatantSelected(event)
    {
+      let combatant = event.detail;
       selectableCombatants.forEach(x => x.isSelected = false);
       combatant.isSelected = true;
       selectedCombatantId = combatant.id;
       selectableCombatants = selectableCombatants;
       isAnyCombatantSelected = true;
+   }
+
+   function _focusToken(event)
+   {
+      moduleAPI.selectCombatantToken(selectedCombatantId);
    }
 
    function _onConfirm()
@@ -98,35 +105,16 @@
    }
 </script>
 
-<!-- This is necessary for Svelte to generate accessors TRL can access for `elementRoot` -->
 <svelte:options accessors={true}/>
 
 <EmptyApplicationShell bind:elementRoot>
    <main class="drag-target" use:draggable={{ position, hasTargetClassList: ['drag-target'] }}
          on:contextmenu={() => application.close()}
          role=application>
-      <div class="appIcon drag-target fa-solid fa-crosshairs fa-xl" alt="icon"></div>
-      <h1 class="drag-target">Select the next Combatant</h1>
-      <div class="content">
-         <div class="drag-target combatant-container prev">
-            {#each previousCombatants as combatant (combatant.id)}
-               <SimpleActor
-                name="{combatant.name}"
-                icon="{combatant.icon}"
-               />
-            {/each}
-         </div>
-         <span class="fa-solid fa-caret-right fa-4x"></span>
-         <div class="drag-target combatant-container">
-            {#each selectableCombatants as combatant (combatant.id)}
-               <SelectableActor
-                isSelected="{combatant.isSelected}"
-                name="{combatant.name}"
-                icon="{combatant.icon}"
-                on:selected={(ev) => _onCombatantSelected(combatant)}
-               />
-            {/each}
-         </div>
+      <div class="drag-target content">
+         <CombatantList combatants="{previousCombatants}"></CombatantList>
+         <CombatantGrid combatants="{selectableCombatants}" on:combatantSelected={_onCombatantSelected}></CombatantGrid>
+         <CombatantSelectionToolbox on:focusToken={_focusToken}></CombatantSelectionToolbox>
       </div>
       {#if isAnyCombatantSelected}
          <div class="drag-target selectButtonContainer">
@@ -138,31 +126,13 @@
 
 <style lang="scss">
    .content {
+      max-height: 380px;
       display: flex;
       flex-flow: row nowrap;
-      justify-content: center;
-      align-items: center;
-      align-content: center;
-      gap: 10px;
-   }
-
-   .combatant-container {
-      display: flex;
-      flex-flow: row wrap;
-      justify-content: right;
-      align-items: center;
-      align-content: center;
-      gap: 10px;
-   }
-
-   .combatant-container.prev {
-      min-width: 200px;
+      justify-content: flex-start;
       align-items: flex-start;
       align-content: flex-start;
-   }
-
-   span {
-      color: $primary-color
+      gap: 5px;
    }
 
    main {
@@ -183,19 +153,5 @@
       display: flex;
       flex-flow: column nowrap;
       justify-content: flex-end;
-   }
-
-   .appIcon {
-      position: absolute;
-      margin: 7px 0px;
-      max-width: 32px;
-      color: $primary-color;
-   }
-
-   h1 {
-      color: $primary-color;
-      border-color: $primary-color;
-      padding-bottom: 5px;
-      font-size: small;
    }
 </style>

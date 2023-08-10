@@ -11,8 +11,8 @@ export default class RequestWindowApplication extends SvelteApplication
             id: 'popcorn-initiative-overlay',
             classes: ['tjs-essential-svelte-esm'],
             resizable: true,
-            width: 800,
-            height: 700,
+            width: 610,
+            height: 440,
 
             svelte: {
                 class: RequestWindowShell,

@@ -10,26 +10,30 @@
 
 <style lang="scss">
    .combatant-item {
-      max-width: 48px;
       width: auto;
       height: auto;
-      display: inline-block;
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: center;
+      align-items: center;
+      align-content: center;
       border: 1px solid #CCC;
       border-radius: 10px;
       box-shadow: 0 0 5px -1px rgba(0, 0, 0, 0.2);
       vertical-align: middle;
-      padding: 5px;
-      text-align: center;
       filter: grayscale(100%);
    }
 
    .combatant-icon {
-      width: auto;
+      width: 24px;
+      margin: 1px 3px 1px 8px;
       height: auto;
    }
 
    .combatant-name {
-      color: white;
+      color: $primary-color;
+      width: 100px;
+      text-align: left;
       font-size: 12px;
       overflow: hidden;
       text-overflow: ellipsis;

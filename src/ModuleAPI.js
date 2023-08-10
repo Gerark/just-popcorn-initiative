@@ -38,6 +38,26 @@ export class ModuleAPI
         dispatchCloseRequestWindow();
     }
 
+    selectCombatantToken(combatantId)
+    {
+        const combatant = this._getCombatantById(combatantId);
+        if (!combatant)
+        {
+            ui.notifications.warn(`You can't focus the token. Select a combatant from the grid first.`);
+            return;
+        }
+
+        const token = game.canvas.tokens.objects.children.find((x) => x.id === combatant.tokenId);
+        if (!token)
+        {
+            ui.notifications.warn(`You can't focus the token. No token can be found in the current canvas.`);
+            return;
+        }
+
+        const scale = Math.max(1, canvas.stage.scale.x);
+        canvas.animatePan({ x: token.document.x, y: token.document.y, scale, duration: 1000 });
+    }
+
     showRequestWindowOrPassTurn()
     {
         if (!game.combat || !game.combat.current)
@@ -80,8 +100,8 @@ export class ModuleAPI
     {
         if (secondCombatantId !== firstCombatantId)
         {
-            const firstCombatant = game.combat.turns.find((x) => { return x.id === firstCombatantId; });
-            const secondCombatant = game.combat.turns.find((x) => { return x.id === secondCombatantId; });
+            const firstCombatant = this._getCombatantById(firstCombatantId);
+            const secondCombatant = this._getCombatantById(secondCombatantId);
             const currentCombatant = game.combat.turns[game.combat.turn];
             if (secondCombatant.initiative === firstCombatant.initiative ||
           secondCombatant.initiative >= currentCombatant.initiative)
@@ -124,6 +144,11 @@ export class ModuleAPI
     _onCombatUpdate()
     {
         setTimeout(() => { this._svelteRequestWindowRoot?.updateData(); }, 100);
+    }
+
+    _getCombatantById(combatantId)
+    {
+        return game.combat.turns.find((x) => { return x.id === combatantId; });
     }
 
     get _svelteRequestWindowRoot()
