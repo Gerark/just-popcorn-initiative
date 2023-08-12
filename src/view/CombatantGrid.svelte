@@ -6,9 +6,14 @@
 
    const dispatch = createEventDispatcher();
 
-   function _onCombatantSelected(combatant)
+   function _onItemClick(combatant)
    {
-      dispatch("combatantSelected", combatant);
+      dispatch("itemClick", combatant);
+   }
+
+   function _onItemDoubleClick(combatant)
+   {
+      dispatch("itemDoubleClick", combatant);
    }
 
 </script>
@@ -21,7 +26,8 @@
           isSelected="{combatant.isSelected}"
           name="{combatant.name}"
           icon="{combatant.icon}"
-          on:selected={(ev) => _onCombatantSelected(combatant)}
+          on:click={(ev) => _onItemClick(combatant)}
+          on:dblclick={(ev) => _onItemDoubleClick(combatant)}
          />
       {/each}
    </div>

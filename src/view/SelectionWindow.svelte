@@ -2,7 +2,7 @@
    import { getContext } from 'svelte';
    import { EmptyApplicationShell } from '#runtime/svelte/component/core';
    import { draggable } from '#runtime/svelte/store/position';
-   import { subscribeToCloseRequestWindow } from "../ModuleStore.js";
+   import { subscribeToCloseSelectionWindow } from "../ModuleStore.js";
    import CombatantList from "./CombatantList.svelte";
    import CombatantGrid from "./CombatantGrid.svelte";
    import CombatantSelectionToolbox from "./CombatantSelectionToolbox.svelte";
@@ -12,7 +12,7 @@
    const { application, moduleAPI } = getContext('#external');
    const position = application.position;
 
-   subscribeToCloseRequestWindow(() =>
+   subscribeToCloseSelectionWindow(() =>
    {
       application.close();
    });
@@ -76,9 +76,8 @@
       selectableCombatants = selectableCombatants;
    }
 
-   function _onCombatantSelected(event)
+   function _selectCombatant(combatant)
    {
-      let combatant = event.detail;
       selectableCombatants.forEach(x => x.isSelected = false);
       combatant.isSelected = true;
       selectedCombatantId = combatant.id;
@@ -103,6 +102,12 @@
           ui.notifications.error(error.message);
        });
    }
+
+   function _onCombatantDoubleClick(combatant)
+   {
+      _selectCombatant(combatant);
+      _focusToken();
+   }
 </script>
 
 <svelte:options accessors={true}/>
@@ -113,7 +118,9 @@
          role=application>
       <div class="drag-target content">
          <CombatantList combatants="{previousCombatants}"></CombatantList>
-         <CombatantGrid combatants="{selectableCombatants}" on:combatantSelected={_onCombatantSelected}></CombatantGrid>
+         <CombatantGrid combatants="{selectableCombatants}"
+                        on:itemClick={(e) => _selectCombatant(e.detail)}
+                        on:itemDoubleClick={(e) => _onCombatantDoubleClick(e.detail)}></CombatantGrid>
          <CombatantSelectionToolbox on:focusToken={_focusToken}></CombatantSelectionToolbox>
       </div>
       {#if isAnyCombatantSelected}

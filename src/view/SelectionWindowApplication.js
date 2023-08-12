@@ -1,8 +1,8 @@
 import { SvelteApplication } from '#runtime/svelte/application';
 
-import RequestWindowShell from './RequestWindowShell.svelte';
+import SelectionWindow from './SelectionWindow.svelte';
 
-export default class RequestWindowApplication extends SvelteApplication
+export default class SelectionWindowApplication extends SvelteApplication
 {
     static get defaultOptions()
     {
@@ -15,7 +15,7 @@ export default class RequestWindowApplication extends SvelteApplication
             height: 440,
 
             svelte: {
-                class: RequestWindowShell,
+                class: SelectionWindow,
                 target: document.body,
                 context: { moduleAPI }
             }

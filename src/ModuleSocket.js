@@ -9,7 +9,7 @@ export function initializeSocket()
 {
     moduleSocket = socketlib.registerModule("just-popcorn-initiative");
     moduleSocket.register("passTurnTo", passTurnTo);
-    moduleSocket.register("closeRequestWindow", closeRequestWindow);
+    moduleSocket.register("closeSelectionWindow", closeSelectionWindow);
 }
 
 /**
@@ -22,7 +22,7 @@ function passTurnTo(selectedCombatantId)
     ModuleAPI.instance.swapCombatantTurn(selectedCombatantId, nextCombatant.id).then(async () =>
     {
         await game.combat.nextTurn();
-        await moduleSocket.executeForEveryone("closeRequestWindow");
+        await moduleSocket.executeForEveryone("closeSelectionWindow");
     }
     );
 }
@@ -30,7 +30,7 @@ function passTurnTo(selectedCombatantId)
 /**
  *
  */
-function closeRequestWindow()
+function closeSelectionWindow()
 {
-    ModuleAPI.instance.closeRequestWindow();
+    ModuleAPI.instance.closeSelectionWindow();
 }

@@ -1,5 +1,5 @@
-import RequestWindowApplication from "./view/RequestWindowApplication.js";
-import { dispatchCloseRequestWindow } from "./ModuleStore.js";
+import SelectionWindowApplication from "./view/SelectionWindowApplication.js";
+import { dispatchCloseSelectionWindow } from "./ModuleStore.js";
 import { moduleSocket } from "./ModuleSocket.js";
 
 export class ModuleAPI
@@ -11,7 +11,7 @@ export class ModuleAPI
 
     constructor()
     {
-        this.requestWindow = null;
+        this.selectionWindow = null;
         Hooks.on("createCombatant", () => this._onCombatantCreated());
         Hooks.on("deleteCombatant", () => this._onCombatantDeleted());
         Hooks.on("updateCombat", () => this._onCombatUpdate());
@@ -33,9 +33,9 @@ export class ModuleAPI
         return await moduleSocket.executeAsGM("passTurnTo", combatantId);
     }
 
-    closeRequestWindow()
+    closeSelectionWindow()
     {
-        dispatchCloseRequestWindow();
+        dispatchCloseSelectionWindow();
     }
 
     selectCombatantToken(combatantId)
@@ -58,7 +58,7 @@ export class ModuleAPI
         canvas.animatePan({ x: token.document.x, y: token.document.y, scale, duration: 1000 });
     }
 
-    showRequestWindowOrPassTurn()
+    showSelectionWindowOrPassTurn()
     {
         if (!game.combat || !game.combat.current)
         {
@@ -93,7 +93,7 @@ export class ModuleAPI
             return;
         }
 
-        this._showRequestWindow();
+        this._showSelectionWindow();
     }
 
     async swapCombatantTurn(firstCombatantId, secondCombatantId)
@@ -126,24 +126,24 @@ export class ModuleAPI
         }
     }
 
-    _showRequestWindow()
+    _showSelectionWindow()
     {
-        this.requestWindow = new RequestWindowApplication().render(true, { focus: true });
+        this.selectionWindow = new SelectionWindowApplication().render(true, { focus: true });
     }
 
     _onCombatantCreated(combatant)
     {
-        setTimeout(() => { this._svelteRequestWindowRoot?.updateData(); }, 100);
+        setTimeout(() => { this._svelteSelectionWindowRoot?.updateData(); }, 100);
     }
 
     _onCombatantDeleted(combatant)
     {
-        setTimeout(() => { this._svelteRequestWindowRoot?.updateData(); }, 100);
+        setTimeout(() => { this._svelteSelectionWindowRoot?.updateData(); }, 100);
     }
 
     _onCombatUpdate()
     {
-        setTimeout(() => { this._svelteRequestWindowRoot?.updateData(); }, 100);
+        setTimeout(() => { this._svelteSelectionWindowRoot?.updateData(); }, 100);
     }
 
     _getCombatantById(combatantId)
@@ -151,11 +151,11 @@ export class ModuleAPI
         return game.combat.turns.find((x) => { return x.id === combatantId; });
     }
 
-    get _svelteRequestWindowRoot()
+    get _svelteSelectionWindowRoot()
     {
-        if (this.requestWindow && this.requestWindow.svelte.applicationShell)
+        if (this.selectionWindow && this.selectionWindow.svelte.applicationShell)
         {
-            return this.requestWindow.svelte.component(0);
+            return this.selectionWindow.svelte.component(0);
         }
         return null;
     }

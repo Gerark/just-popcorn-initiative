@@ -1,20 +1,10 @@
 <script>
-   import { createEventDispatcher } from "svelte";
-
    export let name;
    export let icon;
    export let isSelected;
-
-   const dispatch = createEventDispatcher();
-
-   function onActorSelected()
-   {
-      dispatch("selected");
-   }
 </script>
 
-<div class="combatant-item" class:selected={isSelected} class:unselected={!isSelected} on:keydown={onActorSelected}
-     on:click={onActorSelected}>
+<div class="combatant-item" class:selected={isSelected} class:unselected={!isSelected} on:keydown on:click on:dblclick>
    <img class="combatant-icon" src="{icon}" alt="{icon}"/>
    <div class="combatant-name">{name}</div>
 </div>

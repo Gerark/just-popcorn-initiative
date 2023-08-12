@@ -1,18 +1,18 @@
-const closeRequestWindowSubscribers = [];
+const closeSelectionWindowSubscribers = [];
 
 /**
  *
  */
-export function dispatchCloseRequestWindow()
+export function dispatchCloseSelectionWindow()
 {
-    closeRequestWindowSubscribers.forEach((x) => x());
+    closeSelectionWindowSubscribers.forEach((x) => x());
 }
 
 /**
  *
  * @param subscriber
  */
-export function subscribeToCloseRequestWindow(subscriber)
+export function subscribeToCloseSelectionWindow(subscriber)
 {
-    closeRequestWindowSubscribers.push(subscriber);
+    closeSelectionWindowSubscribers.push(subscriber);
 }
