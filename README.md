@@ -11,7 +11,6 @@ Blablabla
 
 - Select next combatant by targeting a token ( toolbox action )
 - Invisible/Unknown enemies shouldn't be listed for players who shouldn't see them ( more info to collect on this topic )
-- Icons to identify combatant owned by players ( show the circle/color similar to what happens with targeting? )
 - Sorting options for players/gm. Gm can sort by level/stats too?
 
 - Add Localizations ( Error/Warning messages + UI )
