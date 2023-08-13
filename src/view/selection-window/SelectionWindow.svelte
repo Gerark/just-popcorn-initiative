@@ -6,12 +6,14 @@
       selectableCombatants,
       previousCombatants,
       isAnyCombatantSelected,
-      selectedCombatantId
-   } from "../ModuleStore.js";
+      selectedCombatantId,
+      toolboxActions,
+      isSelectionWindowHovered
+   } from "../../ModuleStore.js";
    import CombatantList from "./CombatantList.svelte";
    import CombatantGrid from "./CombatantGrid.svelte";
-   import CombatantSelectionToolbox from "./CombatantSelectionToolbox.svelte";
-   import { errorNotification } from "../ModuleUtils.js";
+   import CombatantSelectionToolbox from "./Toolbox.svelte";
+   import { CanvasInteraction } from "../../CanvasInteraction.js";
 
    export let elementRoot;
 
@@ -20,18 +22,24 @@
 
    function _panToToken(id)
    {
-      moduleAPI.panToCombatantToken(id);
+      CanvasInteraction.panToCombatantToken(id);
    }
 
    function _highlightToken(event, id, highlight = true)
    {
-      moduleAPI.highlightCombatantToken(event, id, highlight);
+      CanvasInteraction.highlightCombatantToken(event, id, highlight);
    }
 
    function _onConfirm()
    {
       moduleAPI.executePassTurnTo($selectedCombatantId);
    }
+
+   function _onWindowHover(isHover)
+   {
+      $isSelectionWindowHovered = isHover;
+   }
+
 </script>
 
 <svelte:options accessors={true}/>
@@ -39,6 +47,8 @@
 <EmptyApplicationShell bind:elementRoot>
    <main class="drag-target" use:draggable={{ position, hasTargetClassList: ['drag-target'] }}
          on:contextmenu={() => application.close()}
+         on:mouseenter={(e) => _onWindowHover(true)}
+         on:mouseleave={(e) => _onWindowHover(false)}
          role=application>
       <div class="drag-target content">
          <CombatantList combatants="{$previousCombatants}"></CombatantList>
@@ -48,8 +58,8 @@
                         on:itemMouseEnter={(e) => { _highlightToken(e, e.detail.id, true); }}
                         on:itemMouseExit={(e) => { _highlightToken(e, e.detail.id, false); }}>
          </CombatantGrid>
-         <CombatantSelectionToolbox
-          on:focusToken={() => _panToToken($selectedCombatantId) }></CombatantSelectionToolbox>
+         <CombatantSelectionToolbox actions="{$toolboxActions}"
+                                    on:focusToken={() => _panToToken($selectedCombatantId) }></CombatantSelectionToolbox>
       </div>
       {#if $isAnyCombatantSelected}
          <div class="drag-target selectButtonContainer">

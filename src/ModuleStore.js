@@ -2,6 +2,7 @@ import { writable, derived } from "svelte/store";
 
 export const selectableCombatants = writable([]);
 export const previousCombatants = writable([]);
+export const isSelectionWindowHovered = writable(false);
 export const selectedCombatantId = _createSelectedCombatantId();
 export const isAnyCombatantSelected = derived(selectableCombatants, ($selectableCombatants) =>
 {
@@ -9,6 +10,10 @@ export const isAnyCombatantSelected = derived(selectableCombatants, ($selectable
     {
         return x.isSelected;
     });
+});
+export const toolboxActions = derived(selectedCombatantId, ($selectedCombatantId) =>
+{
+    return [];
 });
 
 /**
