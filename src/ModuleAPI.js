@@ -22,7 +22,7 @@ export class ModuleAPI
         Hooks.on("deleteCombatant", (ev) => this._updateCombatantsData(ev));
         Hooks.on("updateCombat", (ev) => this._updateCombatantsData(ev));
         Hooks.on("canvasTearDown", () => this.closeSelectionWindow());
-        Hooks.on("hoverToken", (token, isHover) => { this._highlightSelectableToken(token.document.id, isHover); });
+        Hooks.on("hoverToken", (token, isHover) => { this._highlightActor(token.document.id, isHover); });
         if (game.combat)
         {
             this._updateCombatantsData(game.combat);
@@ -247,9 +247,18 @@ If you are the last or the second last combatant in the round the popcorn initia
         }
     }
 
-    _highlightSelectableToken(tokenId, isHover)
+    _highlightActor(tokenId, isHover)
     {
         selectableCombatants.update((list) =>
+        {
+            list.forEach((x) =>
+            {
+                x.isHighlighted = (x.tokenId === tokenId) ? isHover : false;
+            });
+            return list;
+        });
+
+        previousCombatants.update((list) =>
         {
             list.forEach((x) =>
             {

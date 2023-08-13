@@ -1,10 +1,11 @@
 <script>
    export let name;
    export let icon;
+   export let isHighlighted;
 </script>
 
-<div class="combatant-item drag-target">
-   <img class="combatant-icon drag-target" src="{icon}" alt="{icon}"/>
+<div class="combatant-item drag-target" class:highlighted={isHighlighted}>
+   <img class="combatant-icon drag-target" class:highlighted={isHighlighted} src="{icon}" alt="{icon}"/>
    <div class="combatant-name drag-target">{name}</div>
 </div>
 
@@ -17,9 +18,8 @@
       justify-content: center;
       align-items: center;
       align-content: center;
-      border: 1px solid #CCC;
+      border: 1px solid $secondary-disabled-color;
       border-radius: 10px;
-      box-shadow: 0 0 5px -1px rgba(0, 0, 0, 0.2);
       vertical-align: middle;
       filter: grayscale(100%);
    }
@@ -30,6 +30,10 @@
       height: auto;
    }
 
+   .combatant-icon.highlighted {
+      margin: 0px 2px 0px 8px;
+   }
+
    .combatant-name {
       color: $primary-color;
       width: 100px;
@@ -38,5 +42,9 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+   }
+
+   .combatant-item.highlighted {
+      border: 2px solid $secondary-color;
    }
 </style>

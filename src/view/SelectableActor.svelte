@@ -17,7 +17,7 @@
       width: auto;
       height: auto;
       display: inline-block;
-      border: 1px solid #CCC;
+      border: 1px solid $secondary-disabled-color;
       border-radius: 10px;
       cursor: pointer;
       vertical-align: middle;
@@ -35,7 +35,7 @@
       animation: zoom-in 0.1s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
    }
 
-   .highlighted {
+   .highlighted:not(.selected) {
       border: 2px solid $secondary-color;
       filter: none;
       animation: zoom-in-half 0.1s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;

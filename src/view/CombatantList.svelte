@@ -12,6 +12,7 @@
          <SimpleActor
           name="{combatant.name}"
           icon="{combatant.icon}"
+          isHighlighted="{combatant.isHighlighted}"
          />
       {/each}
    </div>
