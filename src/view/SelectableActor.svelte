@@ -3,42 +3,86 @@
    export let icon;
    export let isSelected;
    export let isHighlighted;
+   export let owners = [];
 </script>
 
-<div class="combatant-item" class:selected={isSelected} class:unselected={!isSelected} class:highlighted={isHighlighted}
-     on:keydown on:click on:dblclick on:mouseenter on:mouseleave>
-   <img class="combatant-icon" src="{icon}" alt="{icon}"/>
-   <div class="combatant-name">{name}</div>
-</div>
+<main class:selected={isSelected} class:unselected={!isSelected} class:highlighted={isHighlighted}
+      on:keydown on:click on:dblclick on:mouseenter on:mouseleave>
+   <div class="combatant-item" class:selected={isSelected} class:unselected={!isSelected}
+        class:highlighted={isHighlighted}>
+      <img class="combatant-icon" src="{icon}" alt="{icon}"/>
+      <div class="combatant-name">{name}</div>
+   </div>
+   <div class="owner-icon-container">
+      {#each owners as owner}
+         <div class="fa-solid fa-circle fa-xs owner-icon" style="{`--player-color:${owner.color};`}"></div>
+      {/each}
+   </div>
+</main>
+
 
 <style lang="scss">
+   main {
+      display: flex;
+      flex-flow: column nowrap;
+      cursor: pointer;
+   }
+
    .combatant-item {
       max-width: 64px;
       width: auto;
       height: auto;
-      display: inline-block;
+      display: flex;
+      flex-flow: column nowrap;
       border: 1px solid $secondary-disabled-color;
       border-radius: 10px;
-      cursor: pointer;
       vertical-align: middle;
-      padding: 5px;
+      padding: 5px 5px 15px 5px;
+      gap: 2.5px;
       text-align: center;
    }
 
-   .unselected {
-      animation: zoom-out 0.1s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
-      filter: grayscale(100%);
+   .owner-icon {
+      color: var(--player-color);
+      pointer-events: none;
    }
 
-   .selected {
-      border: 2px solid $primary-color;
+   .owner-icon-container {
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: center;
+      gap: 2px;
+      transform: translate(0px, -11px);
+      pointer-events: none;
+   }
+
+   main.unselected {
+      animation: zoom-out 0.1s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+   }
+
+   main.selected {
       animation: zoom-in 0.1s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
    }
 
-   .highlighted:not(.selected) {
-      border: 2px solid $secondary-color;
+   main:hover:not(.selected) {
+      animation: zoom-in 0.1s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+   }
+
+   main.highlighted:not(.selected) {
+      animation: zoom-in 0.1s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+   }
+
+   .combatant-item.unselected {
+      filter: grayscale(100%);
+   }
+
+   .combatant-item.selected {
+      border: 2px solid $primary-color;
+   }
+
+   .combatant-item.highlighted:not(.selected) {
+      border: 1px solid $secondary-color;
       filter: none;
-      animation: zoom-in-half 0.1s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
    }
 
    .combatant-item:active {
@@ -48,7 +92,6 @@
    .combatant-item:hover:not(.selected) {
       border: 1px solid $secondary-color;
       filter: none;
-      animation: zoom-in-half 0.1s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
    }
 
    .combatant-icon {

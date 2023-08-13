@@ -194,7 +194,8 @@ export class ModuleAPI
                     isSelected,
                     tokenId: combatant.tokenId,
                     actorId: combatant.actorId,
-                    isHighlighted: false
+                    isHighlighted: false,
+                    owners: this._retrieveOwnersInfo(combatant.actorId)
                 });
             }
             list.sort((a, b) =>
@@ -206,6 +207,25 @@ export class ModuleAPI
             });
         }
         selectableCombatants.set(list);
+    }
+
+    _retrieveOwnersInfo(actorId)
+    {
+        const owners = [];
+        const actor = game.actors.get(actorId);
+        for (const key in actor.ownership)
+        {
+            const ownershipLevel = actor.ownership[key];
+            if (key !== "default")
+            {
+                const player = game.users.get(key);
+                if (ownershipLevel === 3 && !player.isGM)
+                {
+                    owners.push({ color: player.color });
+                }
+            }
+        }
+        return owners;
     }
 
     _updatePreviousCombatants(combat)

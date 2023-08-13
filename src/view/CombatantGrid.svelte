@@ -37,6 +37,7 @@
           isHighlighted="{combatant.isHighlighted}"
           name="{combatant.name}"
           icon="{combatant.icon}"
+          owners="{combatant.owners}"
           on:click={(ev) => _onItemClick(combatant)}
           on:dblclick={(ev) => _onItemDoubleClick(combatant)}
           on:mouseenter={(ev) => _onItemMouseEnter(combatant)}
