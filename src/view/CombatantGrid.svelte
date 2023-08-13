@@ -40,7 +40,7 @@
           on:click={(ev) => _onItemClick(combatant)}
           on:dblclick={(ev) => _onItemDoubleClick(combatant)}
           on:mouseenter={(ev) => _onItemMouseEnter(combatant)}
-          on:mouseexit={(ev) => _onItemMouseExit(combatant)}
+          on:mouseleave={(ev) => _onItemMouseExit(combatant)}
          />
       {/each}
    </div>

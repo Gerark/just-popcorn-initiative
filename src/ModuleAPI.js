@@ -193,12 +193,16 @@ export class ModuleAPI
                     id: combatant.id,
                     isSelected,
                     tokenId: combatant.tokenId,
+                    actorId: combatant.actorId,
                     isHighlighted: false
                 });
             }
             list.sort((a, b) =>
             {
-                return a.name > b.name ? 1 : a.name < b.name ? -1 : 0;
+                const actorAIsCharacter = game.actors.get(a.actorId).type === "character" ? 0 : 1;
+                const actorBIsCharacter = game.actors.get(b.actorId).type === "character" ? 0 : 1;
+                const sortedByType = actorAIsCharacter - actorBIsCharacter;
+                return sortedByType || (a.name > b.name ? 1 : a.name < b.name ? -1 : 0);
             });
         }
         selectableCombatants.set(list);
