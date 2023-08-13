@@ -2,111 +2,30 @@
    import { getContext } from 'svelte';
    import { EmptyApplicationShell } from '#runtime/svelte/component/core';
    import { draggable } from '#runtime/svelte/store/position';
-   import { subscribeToCloseSelectionWindow } from "../ModuleStore.js";
+   import {
+      selectableCombatants,
+      previousCombatants,
+      isAnyCombatantSelected,
+      selectedCombatantId
+   } from "../ModuleStore.js";
    import CombatantList from "./CombatantList.svelte";
    import CombatantGrid from "./CombatantGrid.svelte";
    import CombatantSelectionToolbox from "./CombatantSelectionToolbox.svelte";
+   import { errorNotification } from "../ModuleUtils.js";
 
    export let elementRoot;
 
    const { application, moduleAPI } = getContext('#external');
    const position = application.position;
 
-   subscribeToCloseSelectionWindow(() =>
+   function _focusToken()
    {
-      application.close();
-   });
-
-   let selectableCombatants = [];
-   let previousCombatants = [];
-   let isAnyCombatantSelected = false;
-   let selectedCombatantId = -1;
-   updateData();
-
-   export function updateData()
-   {
-      _updateSelectableCombatants();
-      _updatePreviousCombatants();
-   }
-
-   function _updatePreviousCombatants()
-   {
-      previousCombatants = [];
-      let turn = game.combat.turn;
-      for (let i = 0; i <= turn; i++)
-      {
-         let combatant = game.combat.turns[i];
-         previousCombatants.push({
-            icon: combatant.img,
-            name: combatant.name,
-            id: combatant.id
-         });
-      }
-   }
-
-   function _updateSelectableCombatants()
-   {
-      selectableCombatants = [];
-      isAnyCombatantSelected = false;
-      let turn = game.combat.turn;
-      for (let i = turn + 1; i < game.combat.turns.length; i++)
-      {
-         let combatant = game.combat.turns[i];
-         const isSelected = selectedCombatantId === combatant.id;
-         selectableCombatants.push({
-            icon: combatant.img,
-            name: combatant.name,
-            id: combatant.id,
-            isSelected: isSelected
-         });
-         if (isSelected)
-         {
-            isAnyCombatantSelected = true;
-         }
-      }
-      selectableCombatants.sort((a, b) =>
-      {
-         return a.name > b.name ? 1 : a.name < b.name ? -1 : 0;
-      });
-
-      if (!isAnyCombatantSelected)
-      {
-         selectedCombatantId = -1;
-      }
-      selectableCombatants = selectableCombatants;
-   }
-
-   function _selectCombatant(combatant)
-   {
-      selectableCombatants.forEach(x => x.isSelected = false);
-      combatant.isSelected = true;
-      selectedCombatantId = combatant.id;
-      selectableCombatants = selectableCombatants;
-      isAnyCombatantSelected = true;
-   }
-
-   function _focusToken(event)
-   {
-      moduleAPI.selectCombatantToken(selectedCombatantId);
+      moduleAPI.focusCombatantToken($selectedCombatantId);
    }
 
    function _onConfirm()
    {
-      moduleAPI.executePassTurnTo(selectedCombatantId)
-       .then(() =>
-       {
-          application.close();
-       })
-       .catch((error) =>
-       {
-          ui.notifications.error(error.message);
-       });
-   }
-
-   function _onCombatantDoubleClick(combatant)
-   {
-      _selectCombatant(combatant);
-      _focusToken();
+      moduleAPI.executePassTurnTo($selectedCombatantId);
    }
 </script>
 
@@ -117,13 +36,13 @@
          on:contextmenu={() => application.close()}
          role=application>
       <div class="drag-target content">
-         <CombatantList combatants="{previousCombatants}"></CombatantList>
-         <CombatantGrid combatants="{selectableCombatants}"
-                        on:itemClick={(e) => _selectCombatant(e.detail)}
-                        on:itemDoubleClick={(e) => _onCombatantDoubleClick(e.detail)}></CombatantGrid>
+         <CombatantList combatants="{$previousCombatants}"></CombatantList>
+         <CombatantGrid combatants="{$selectableCombatants}"
+                        on:itemClick={(e) => $selectedCombatantId = e.detail.id}
+                        on:itemDoubleClick={(e) => { $selectedCombatantId = e.detail.id; this.focusToken() }}></CombatantGrid>
          <CombatantSelectionToolbox on:focusToken={_focusToken}></CombatantSelectionToolbox>
       </div>
-      {#if isAnyCombatantSelected}
+      {#if $isAnyCombatantSelected}
          <div class="drag-target selectButtonContainer">
             <button on:click={_onConfirm}>Confirm</button>
          </div>

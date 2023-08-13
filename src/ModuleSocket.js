@@ -1,4 +1,5 @@
 import { ModuleAPI } from "./ModuleAPI.js";
+import { errorNotification, getCombatById } from "./ModuleUtils.js";
 
 export let moduleSocket;
 
@@ -15,13 +16,22 @@ export function initializeSocket()
 /**
  *
  * @param selectedCombatantId
+ *
+ * @param combatId
  */
-function passTurnTo(selectedCombatantId)
+function passTurnTo(selectedCombatantId, combatId)
 {
-    const nextCombatant = game.combat.turns[game.combat.turn + 1];
-    ModuleAPI.instance.swapCombatantTurn(selectedCombatantId, nextCombatant.id).then(async () =>
+    const combat = getCombatById(combatId);
+    if (!combat)
     {
-        await game.combat.nextTurn();
+        errorNotification("A request to end turn can't be performed. The combatId provided is not valid");
+        return;
+    }
+
+    const nextCombatant = combat.turns[combat.turn + 1];
+    ModuleAPI.instance.swapCombatantTurn(selectedCombatantId, nextCombatant.id, combat).then(async () =>
+    {
+        await combat.nextTurn();
         await moduleSocket.executeForEveryone("closeSelectionWindow");
     }
     );

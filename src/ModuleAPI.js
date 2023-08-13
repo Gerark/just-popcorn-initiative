@@ -1,6 +1,12 @@
 import SelectionWindowApplication from "./view/SelectionWindowApplication.js";
-import { dispatchCloseSelectionWindow } from "./ModuleStore.js";
+import {
+    previousCombatants,
+    selectableCombatants,
+    selectedCombatantId
+} from "./ModuleStore.js";
 import { moduleSocket } from "./ModuleSocket.js";
+import { get as storeGet } from "svelte/store";
+import { errorNotification, warningNotification, getCombatantById } from "./ModuleUtils.js";
 
 export class ModuleAPI
 {
@@ -12,45 +18,60 @@ export class ModuleAPI
     constructor()
     {
         this.selectionWindow = null;
-        Hooks.on("createCombatant", () => this._onCombatantCreated());
-        Hooks.on("deleteCombatant", () => this._onCombatantDeleted());
-        Hooks.on("updateCombat", () => this._onCombatUpdate());
+        Hooks.on("createCombatant", (ev) => this._updateCombatantsData(ev));
+        Hooks.on("deleteCombatant", (ev) => this._updateCombatantsData(ev));
+        Hooks.on("updateCombat", (ev) => this._updateCombatantsData(ev));
+        Hooks.on("canvasTearDown", () => this.closeSelectionWindow());
+        if (game.combat)
+        {
+            this._updateCombatantsData(game.combat);
+        }
     }
 
-    async executePassTurnTo(combatantId)
+    executePassTurnTo(combatantId)
     {
-        const nextCombatant = game.combat.turns.find((x) => { return x.id === combatantId; });
+        const currentCombat = game.combat;
+        const nextCombatant = currentCombat.turns.find((x) => { return x.id === combatantId; });
         if (nextCombatant == null)
         {
-            return new Promise(() => { throw new Error("You can't pass your turn. The selected combatant can't be found."); });
+            errorNotification("Can't end turn. The selected combatant can't be found.");
         }
 
-        if (game.combat.turn + 1 > game.combat.turns.length)
+        if (currentCombat.turn + 1 > currentCombat.turns.length)
         {
-            return new Promise(() => { throw new Error("You can't pass your turn to another combatant. You are the last one of your turn"); });
+            errorNotification("Can't pass turn to another combatant. The current combatant is the last on this round.");
         }
 
-        return await moduleSocket.executeAsGM("passTurnTo", combatantId);
+        moduleSocket.executeAsGM("passTurnTo", combatantId, currentCombat.id).then(() =>
+        {
+            this.closeSelectionWindow();
+        }).catch((error) =>
+        {
+            errorNotification(error.message);
+        });
     }
 
     closeSelectionWindow()
     {
-        dispatchCloseSelectionWindow();
+        if (this.selectionWindow)
+        {
+            this.selectionWindow.close();
+        }
     }
 
-    selectCombatantToken(combatantId)
+    focusCombatantToken(combatantId)
     {
-        const combatant = this._getCombatantById(combatantId);
+        const combatant = getCombatantById(game.combat, combatantId);
         if (!combatant)
         {
-            ui.notifications.warn(`You can't focus the token. Select a combatant from the grid first.`);
+            warningNotification(`Can't focus the token. Select a combatant from the grid first.`);
             return;
         }
 
         const token = game.canvas.tokens.objects.children.find((x) => x.id === combatant.tokenId);
         if (!token)
         {
-            ui.notifications.warn(`You can't focus the token. No token can be found in the current canvas.`);
+            warningNotification(`Can't focus the token. No token can be found in the current canvas.`);
             return;
         }
 
@@ -60,53 +81,54 @@ export class ModuleAPI
 
     showSelectionWindowOrPassTurn()
     {
-        if (!game.combat || !game.combat.current)
+        const currentCombat = game.combat;
+        if (!currentCombat || !currentCombat.current)
         {
-            ui.notifications.warn(`You can't pass your turn. No combat is currently active.`);
+            warningNotification(`Can't end turn. No combat is currently active.`);
             return;
         }
 
-        if (game.combat.current.turn == null)
+        if (currentCombat.current.combatantId == null)
         {
-            ui.notifications.warn(`You can't pass your turn. The combat didn't start yet.`);
+            warningNotification(`Can't end turn. No combatant is currently playing.`);
             return;
         }
 
-        const actorId = game.combat.turns[game.combat.turn].actorId;
+        const actorId = currentCombat.turns[currentCombat.turn].actorId;
         const actor = game.actors.get(actorId);
         if (actor == null)
         {
-            ui.notifications.error(`You can't pass your turn. The current actor in combat is not valid.`);
+            errorNotification(`Can't end turn. The current actor in combat is not valid.`);
             return;
         }
 
         if (!actor.isOwner)
         {
-            ui.notifications.warn(`You can't pass your turn. It's not your turn yet.`);
+            warningNotification(`Can't end turn. It's not your turn yet.`);
             return;
         }
 
-        if (game.combat.current.turn + 1 >= game.combat.turns.length ||
-       game.combat.current.turn + 2 >= game.combat.turns.length)
+        if (currentCombat.current.turn + 1 >= currentCombat.turns.length ||
+       currentCombat.current.turn + 2 >= currentCombat.turns.length)
         {
-            game.combat.nextTurn();
+            currentCombat.nextTurn();
             return;
         }
 
         this._showSelectionWindow();
     }
 
-    async swapCombatantTurn(firstCombatantId, secondCombatantId)
+    async swapCombatantTurn(firstCombatantId, secondCombatantId, combat)
     {
         if (secondCombatantId !== firstCombatantId)
         {
-            const firstCombatant = this._getCombatantById(firstCombatantId);
-            const secondCombatant = this._getCombatantById(secondCombatantId);
-            const currentCombatant = game.combat.turns[game.combat.turn];
+            const firstCombatant = getCombatantById(combat, firstCombatantId);
+            const secondCombatant = getCombatantById(combat, secondCombatantId);
+            const currentCombatant = combat.turns[combat.turn];
             if (secondCombatant.initiative === firstCombatant.initiative ||
           secondCombatant.initiative >= currentCombatant.initiative)
             {
-                await this._rearrangeCombatants();
+                await this._rearrangeCombatants(combat);
             }
 
             const secondInitiative = secondCombatant.initiative;
@@ -115,12 +137,12 @@ export class ModuleAPI
         }
     }
 
-    async _rearrangeCombatants()
+    async _rearrangeCombatants(combat)
     {
-        let currentInitiative = game.combat.turns.length * 10;
-        for (let i = 0; i < game.combat.turns.length; i++)
+        let currentInitiative = combat.turns.length * 10;
+        for (let i = 0; i < combat.turns.length; i++)
         {
-            const combatant = game.combat.turns[i];
+            const combatant = combat.turns[i];
             await combatant.update({ initiative: currentInitiative });
             currentInitiative -= 10;
         }
@@ -131,32 +153,93 @@ export class ModuleAPI
         this.selectionWindow = new SelectionWindowApplication().render(true, { focus: true });
     }
 
-    _onCombatantCreated(combatant)
+    _updateCombatantsData(combat)
     {
-        setTimeout(() => { this._svelteSelectionWindowRoot?.updateData(); }, 100);
-    }
-
-    _onCombatantDeleted(combatant)
-    {
-        setTimeout(() => { this._svelteSelectionWindowRoot?.updateData(); }, 100);
-    }
-
-    _onCombatUpdate()
-    {
-        setTimeout(() => { this._svelteSelectionWindowRoot?.updateData(); }, 100);
-    }
-
-    _getCombatantById(combatantId)
-    {
-        return game.combat.turns.find((x) => { return x.id === combatantId; });
-    }
-
-    get _svelteSelectionWindowRoot()
-    {
-        if (this.selectionWindow && this.selectionWindow.svelte.applicationShell)
+        setTimeout(() =>
         {
-            return this.selectionWindow.svelte.component(0);
+            this._updateSelectableCombatants(combat);
+            this._updatePreviousCombatants(combat);
+            this._closeSelectionWindowIfRequired(combat);
+        }, 100);
+    }
+
+    /**
+     *
+     * @param combat
+     */
+    _updateSelectableCombatants(combat)
+    {
+        const list = [];
+        const turn = combat.turn;
+        if (turn != null)
+        {
+            for (let i = turn + 1; i < combat.turns.length; i++)
+            {
+                const combatant = combat.turns[i];
+                const isSelected = storeGet(selectedCombatantId) === combatant.id;
+                list.push({
+                    icon: combatant.img,
+                    name: combatant.name,
+                    id: combatant.id,
+                    isSelected
+                });
+            }
+            list.sort((a, b) =>
+            {
+                return a.name > b.name ? 1 : a.name < b.name ? -1 : 0;
+            });
         }
-        return null;
+        selectableCombatants.set(list);
+    }
+
+    _updatePreviousCombatants(combat)
+    {
+        const list = [];
+        const turn = combat.turn;
+        if (turn != null)
+        {
+            for (let i = 0; i <= turn && i < combat.turns.length; i++)
+            {
+                const combatant = combat.turns[i];
+                list.push({
+                    icon: combatant.img,
+                    name: combatant.name,
+                    id: combatant.id
+                });
+            }
+        }
+
+        previousCombatants.set(list);
+    }
+
+
+    /*
+You should never see the Selection Window is there's no valid combat.
+If the current combatant in the fight is not owned by the player the Selection Window shouldn't be shown
+If you are the last or the second last combatant in the round the popcorn initiative will select automatically according to the options
+*/
+    _closeSelectionWindowIfRequired(combat)
+    {
+        const isValidCombat = combat && combat.current && combat.current.turn != null;
+        if (!isValidCombat)
+        {
+            this.closeSelectionWindow();
+            return;
+        }
+
+        const actorId = combat.turns.length > combat.turn ? combat.turns[combat.turn].actorId : "0";
+        const actor = game.actors.get(actorId);
+        const isValidAndOwnedActor = actor != null && actor.isOwner;
+        if (!isValidAndOwnedActor)
+        {
+            this.closeSelectionWindow();
+            return;
+        }
+
+        const isLastOrSecondLastCombatant = combat.current.turn + 1 >= combat.turns.length || combat.current.turn + 2 >= combat.turns.length;
+        if (isLastOrSecondLastCombatant)
+        {
+            this.closeSelectionWindow();
+        }
     }
 }
