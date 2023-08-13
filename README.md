@@ -43,3 +43,6 @@ Module Configuration
 - Different size preset ( Small, Medium, Large )
 - Different appearing spot ( 4 Corners or just Center )
 - If the appearing spot is set to center give the possibility to save the position
+
+#Compatibility Checks
+- What happens with the boundaries applied by the module? Is the camera going to focus by breaking the block of the pan?
