@@ -5,9 +5,7 @@ Blablabla
 ## Todo:
 
 ### Bugs:
-
-- When the Selection Window is open and there's a change of scene ( View Scene or Activate ) the window should be closed.
-- When a Selection Window is opened we should always gather the combat id to know which combat we're talking about. If the GM is looking another scene the player can't make any request.
+-
 
 ### Features:
 
