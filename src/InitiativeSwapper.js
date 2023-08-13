@@ -13,7 +13,7 @@ export function performSwap(nextCombatantId, combatId)
     if (reason !== ReasonType.None)
     {
         NotificationUtils.notify(reason);
-        throw new Error("Error", { cause: reason });
+        return;
     }
 
     _swapCombatantTurn(first, second, combat).then(async () =>

@@ -1,8 +1,5 @@
 <script>
-   import { createEventDispatcher } from "svelte";
    import ToolboxButton from "./ToolboxButton.svelte";
-
-   const dispatch = createEventDispatcher();
 
    export let actions = [];
 </script>
@@ -11,7 +8,7 @@
    <span class="title">Tools</span>
    <div class="toolboxList">
       {#each actions as action}
-         <ToolboxButton on:click={() => dispatch("focusToken")}></ToolboxButton>
+         <ToolboxButton icon="{action.icon}" command="{action.command}" on:actionRequested></ToolboxButton>
       {/each}
    </div>
 </main>

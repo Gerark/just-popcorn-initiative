@@ -15,7 +15,7 @@
    </div>
    <div class="owner-icon-container">
       {#each owners as owner}
-         <div class="fa-solid fa-circle fa-xs owner-icon" style="{`--player-color:${owner.color};`}"></div>
+         <div class="fa-solid fa-circle owner-icon" style="{`--player-color:${owner.color};`}"></div>
       {/each}
    </div>
 </main>
@@ -23,28 +23,28 @@
 
 <style lang="scss">
    main {
+      background-color: $bg-color-primary;
+      width: 64px;
+      height: 85px;
       display: flex;
       flex-flow: column nowrap;
       cursor: pointer;
+      border: 1px solid $secondary-disabled-color;
+      border-radius: 10px;
+      gap: 2px;
    }
 
    .combatant-item {
-      max-width: 64px;
-      width: auto;
-      height: auto;
       display: flex;
       flex-flow: column nowrap;
-      border: 1px solid $secondary-disabled-color;
-      border-radius: 10px;
       vertical-align: middle;
-      padding: 5px 5px 15px 5px;
-      gap: 2.5px;
       text-align: center;
    }
 
    .owner-icon {
       color: var(--player-color);
       pointer-events: none;
+      font-size: 5px;
    }
 
    .owner-icon-container {
@@ -52,7 +52,6 @@
       flex-flow: row nowrap;
       justify-content: center;
       gap: 2px;
-      transform: translate(0px, -11px);
       pointer-events: none;
    }
 
@@ -62,14 +61,21 @@
 
    main.selected {
       animation: zoom-in 0.1s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+      border: 2px solid $primary-color;
+   }
+
+   .main:active {
+      border: 2px solid $primary-color;
    }
 
    main:hover:not(.selected) {
       animation: zoom-in 0.1s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+      border: 2px solid $secondary-color;
    }
 
    main.highlighted:not(.selected) {
       animation: zoom-in 0.1s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+      border: 2px solid $secondary-color;
    }
 
    .combatant-item.unselected {
@@ -77,26 +83,20 @@
    }
 
    .combatant-item.selected {
-      border: 2px solid $primary-color;
    }
 
    .combatant-item.highlighted:not(.selected) {
-      border: 1px solid $secondary-color;
       filter: none;
    }
 
-   .combatant-item:active {
-      border: 1px solid $primary-color;
-   }
-
    .combatant-item:hover:not(.selected) {
-      border: 1px solid $secondary-color;
       filter: none;
    }
 
    .combatant-icon {
       width: auto;
       height: auto;
+      margin: 5px 5px 0 5px;
    }
 
    .combatant-name {
@@ -105,11 +105,12 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      padding: 0 3px 0 3px;
    }
 
    @keyframes zoom-in {
       100% {
-         transform: scale(1.05);
+         transform: scale(1.1);
       }
    }
 

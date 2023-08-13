@@ -1,9 +1,14 @@
 <script>
+   import { createEventDispatcher } from "svelte";
 
+   const dispatch = createEventDispatcher();
+
+   export let icon;
+   export let command;
 </script>
 
 <main>
-   <button class="toolboxButton fa-solid fa-bullseye" on:click></button>
+   <button class="toolboxButton {icon}" on:click={() => { dispatch("actionRequested", command) }}></button>
 </main>
 
 <style lang="scss">

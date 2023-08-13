@@ -7,6 +7,8 @@ export const ReasonType = {
     EndTurnLastOrSecondLast: 4,
     EndTurnInvalidSelectedCombatant: 5,
     EndTurnInvalidCombatId: 6,
+    TryGetTokenInvalidId: 7,
+    TryGetTokenInvalidCombatantId: 8
 };
 
 export class NotificationUtils
@@ -35,6 +37,12 @@ export class NotificationUtils
             break;
         case ReasonType.EndTurnInvalidCombatId:
             this.warning("A request to end turn can't be performed. The combatId provided is not valid.");
+            break;
+        case ReasonType.TryGetTokenInvalidId:
+            this.warning(`Can't find the token. The provided combatant id can't be found.`);
+            break;
+        case ReasonType.TryGetTokenInvalidCombatantId:
+            this.warning("Can't find the token. The provided token id is invalid.");
             break;
         }
     }
@@ -75,21 +83,25 @@ export class ModuleUtils
     static tryGetToken(combat, combatantId)
     {
         let result = true;
+        let token = null;
+        let reason = ReasonType.None;
         const combatant = this.getCombatantById(combat, combatantId);
         if (!combatant)
         {
-            NotificationUtils.warning(`Can't focus the token. Can't find a token for the selected combatant.`);
+            reason = ReasonType.TryGetTokenInvalidCombatantId;
             result = false;
         }
-
-        const token = game.canvas.tokens.objects.children.find((x) => x.id === combatant.tokenId);
-        if (!token)
+        else
         {
-            NotificationUtils.warning(`Can't focus the token. No token with that id can be found in the current canvas.`);
-            result = false;
+            token = game.canvas.tokens.objects.children.find((x) => x.id === combatant.tokenId);
+            if (!token)
+            {
+                reason = ReasonType.TryGetTokenInvalidId;
+                result = false;
+            }
         }
 
-        return { result, token };
+        return { result, token, reason };
     }
 
     static retrieveOwnersInfo(actorId)

@@ -1,10 +1,18 @@
-import { get as storeGet } from "svelte/store";
-import { previousCombatants, selectableCombatants, selectedCombatantId } from "./ModuleStore.js";
+import { get as svelteGet, get as storeGet } from "svelte/store";
+import {
+    currentTokenPickerTarget,
+    isTokenPickerRunning,
+    previousCombatants,
+    selectableCombatants,
+    selectedCombatantId
+} from "./ModuleStore.js";
 import { ModuleUtils } from "./ModuleUtils.js";
+import { ModuleAPI } from "./ModuleAPI.js";
+import { CanvasInteraction } from "./CanvasInteraction.js";
 
 export class StoreUpdater
 {
-    async updateCombatants(combat)
+    static async updateCombatants(combat)
     {
         return new Promise((resolve) =>
         {
@@ -16,9 +24,10 @@ export class StoreUpdater
             }, 100);
         });
     }
-    
-    highlightCombatantItem(tokenId, isHover)
+
+    static highlightCombatantItem(token, isHover)
     {
+        const tokenId = token.document.id;
         selectableCombatants.update((list) =>
         {
             list.forEach((x) =>
@@ -38,7 +47,47 @@ export class StoreUpdater
         });
     }
 
-    _updateSelectableCombatants(combat)
+    static getToolboxActions(combatantId)
+    {
+        const actions = [];
+        actions.push(
+            { icon: "fa-solid fa-circle-xmark", command: () => { ModuleAPI.instance.closeSelectionWindow(); } });
+        actions.push({ icon: "fa-solid fa-eye-dropper", command: () => { isTokenPickerRunning.set(true); } });
+
+        if (combatantId !== "-1")
+        {
+            actions.push({
+                icon: "fa-solid fa-bullseye",
+                command: () => { CanvasInteraction.panToCombatantToken(combatantId); }
+            });
+        }
+        return actions;
+    }
+
+    static onGlobalClick()
+    {
+        if (svelteGet(isTokenPickerRunning))
+        {
+            const currentToken = svelteGet(currentTokenPickerTarget);
+            if (currentToken)
+            {
+                const currentCombat = game.combat;
+                const tokenId = currentToken.id;
+                for (let i = currentCombat.turn; i < currentCombat.turns.length; i++)
+                {
+                    const combatant = currentCombat.turns[i];
+                    if (combatant.tokenId === tokenId)
+                    {
+                        selectedCombatantId.set(combatant.id);
+                        isTokenPickerRunning.set(false);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    static _updateSelectableCombatants(combat)
     {
         const list = [];
         const turn = combat.turn;
@@ -70,7 +119,7 @@ export class StoreUpdater
         selectableCombatants.set(list);
     }
 
-    _updatePreviousCombatants(combat)
+    static _updatePreviousCombatants(combat)
     {
         const list = [];
         const turn = combat.turn;

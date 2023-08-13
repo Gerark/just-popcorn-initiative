@@ -53,7 +53,7 @@
       flex: 3 1;
       display: flex;
       flex-flow: column nowrap;
-      gap: 5px;
+      gap: 0;
    }
 
    .grid {
@@ -64,8 +64,7 @@
       align-items: flex-start;
       align-content: flex-start;
       overflow: auto;
-      flex: 3 1;
-      gap: 2px;
+      gap: 5px 2px;
       padding: 5px;
    }
 

@@ -1,8 +1,11 @@
-import { writable, derived } from "svelte/store";
+import { derived, writable } from "svelte/store";
+import { ModuleUtils } from "./ModuleUtils.js";
+import { StoreUpdater } from "./StoreUpdater.js";
 
 export const selectableCombatants = writable([]);
 export const previousCombatants = writable([]);
 export const isSelectionWindowHovered = writable(false);
+export const isTokenPickerRunning = writable(false);
 export const selectedCombatantId = _createSelectedCombatantId();
 export const isAnyCombatantSelected = derived(selectableCombatants, ($selectableCombatants) =>
 {
@@ -13,8 +16,32 @@ export const isAnyCombatantSelected = derived(selectableCombatants, ($selectable
 });
 export const toolboxActions = derived(selectedCombatantId, ($selectedCombatantId) =>
 {
-    return [];
+    return StoreUpdater.getToolboxActions($selectedCombatantId);
 });
+
+export const currentTokenPickerTarget = derived([selectableCombatants, isTokenPickerRunning],
+    ([$selectableCombatants, $isTokenPickerRunning]) =>
+    {
+        let tokenResult = null;
+        if ($isTokenPickerRunning)
+        {
+            const combatant = $selectableCombatants.find((x) => x.isHighlighted);
+            if (combatant != null)
+            {
+                const { result, token } = ModuleUtils.tryGetToken(game.combat, combatant.id);
+                if (result)
+                {
+                    tokenResult = {
+                        id: token.document.id,
+                        icon: token.document.texture.src,
+                        name: token.document.name,
+                        owners: ModuleUtils.retrieveOwnersInfo(token.document.actorId)
+                    };
+                }
+            }
+        }
+        return tokenResult;
+    });
 
 /**
  *

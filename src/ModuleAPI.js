@@ -3,7 +3,7 @@ import { moduleSocket } from "./ModuleSocket.js";
 import { NotificationUtils, ModuleUtils, ReasonType } from "./ModuleUtils.js";
 import { StoreUpdater } from "./StoreUpdater.js";
 import { get as svelteGet } from "svelte/store";
-import { isSelectionWindowHovered } from "./ModuleStore.js";
+import { isSelectionWindowHovered, isTokenPickerRunning, selectedCombatantId } from "./ModuleStore.js";
 
 export class ModuleAPI
 {
@@ -15,12 +15,12 @@ export class ModuleAPI
     constructor()
     {
         this.selectionWindow = null;
-        this.storeUpdater = new StoreUpdater();
         Hooks.on("createCombatant", (ev) => this._updateCombatantsData(ev));
         Hooks.on("deleteCombatant", (ev) => this._updateCombatantsData(ev));
         Hooks.on("updateCombat", (ev) => this._updateCombatantsData(ev));
         Hooks.on("canvasTearDown", () => this.closeSelectionWindow());
         Hooks.on("hoverToken", (token, isHover) => { this._onHoverToken(token, isHover); });
+        document.addEventListener("click", (e) => { StoreUpdater.onGlobalClick(); });
     }
 
     executePassTurnTo(combatantId)
@@ -39,6 +39,9 @@ export class ModuleAPI
     {
         this.selectionWindow?.close();
         this.selectionWindow = null;
+        isTokenPickerRunning.set(false);
+        isSelectionWindowHovered.set(false);
+        selectedCombatantId.set("-1");
     }
 
     showSelectionWindowOrPassTurn()
@@ -65,7 +68,7 @@ export class ModuleAPI
     {
         if (this.selectionWindow)
         {
-            this.storeUpdater.updateCombatants(combat).then(() =>
+            StoreUpdater.updateCombatants(combat).then(() =>
             {
                 const { shouldClose } = ModuleUtils.shouldCloseSelectionWindow(combat);
                 if (shouldClose)
@@ -78,9 +81,12 @@ export class ModuleAPI
 
     _onHoverToken(token, isHover)
     {
-        if (this.selectionWindow && !svelteGet(isSelectionWindowHovered))
+        if (this.selectionWindow)
         {
-            this.storeUpdater.highlightCombatantItem(token.document.id, isHover);
+            if (!svelteGet(isSelectionWindowHovered))
+            {
+                StoreUpdater.highlightCombatantItem(token, isHover);
+            }
         }
     }
 }
