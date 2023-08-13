@@ -24,6 +24,7 @@
       {#each combatants as combatant (combatant.id)}
          <SelectableActor
           isSelected="{combatant.isSelected}"
+          isHighlighted="{combatant.isHighlighted}"
           name="{combatant.name}"
           icon="{combatant.icon}"
           on:click={(ev) => _onItemClick(combatant)}

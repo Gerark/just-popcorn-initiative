@@ -39,7 +39,7 @@
          <CombatantList combatants="{$previousCombatants}"></CombatantList>
          <CombatantGrid combatants="{$selectableCombatants}"
                         on:itemClick={(e) => $selectedCombatantId = e.detail.id}
-                        on:itemDoubleClick={(e) => { $selectedCombatantId = e.detail.id; this.focusToken() }}></CombatantGrid>
+                        on:itemDoubleClick={(e) => { $selectedCombatantId = e.detail.id; _focusToken() }}></CombatantGrid>
          <CombatantSelectionToolbox on:focusToken={_focusToken}></CombatantSelectionToolbox>
       </div>
       {#if $isAnyCombatantSelected}

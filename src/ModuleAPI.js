@@ -22,6 +22,7 @@ export class ModuleAPI
         Hooks.on("deleteCombatant", (ev) => this._updateCombatantsData(ev));
         Hooks.on("updateCombat", (ev) => this._updateCombatantsData(ev));
         Hooks.on("canvasTearDown", () => this.closeSelectionWindow());
+        Hooks.on("hoverToken", (token, isHover) => { this._highlightSelectableToken(token.document.id, isHover); });
         if (game.combat)
         {
             this._updateCombatantsData(game.combat);
@@ -181,7 +182,9 @@ export class ModuleAPI
                     icon: combatant.img,
                     name: combatant.name,
                     id: combatant.id,
-                    isSelected
+                    isSelected,
+                    tokenId: combatant.tokenId,
+                    isHighlighted: false
                 });
             }
             list.sort((a, b) =>
@@ -204,7 +207,8 @@ export class ModuleAPI
                 list.push({
                     icon: combatant.img,
                     name: combatant.name,
-                    id: combatant.id
+                    id: combatant.id,
+                    tokenId: combatant.tokenId
                 });
             }
         }
@@ -241,5 +245,17 @@ If you are the last or the second last combatant in the round the popcorn initia
         {
             this.closeSelectionWindow();
         }
+    }
+
+    _highlightSelectableToken(tokenId, isHover)
+    {
+        selectableCombatants.update((list) =>
+        {
+            list.forEach((x) =>
+            {
+                x.isHighlighted = (x.tokenId === tokenId) ? isHover : false;
+            });
+            return list;
+        });
     }
 }

@@ -2,9 +2,11 @@
    export let name;
    export let icon;
    export let isSelected;
+   export let isHighlighted;
 </script>
 
-<div class="combatant-item" class:selected={isSelected} class:unselected={!isSelected} on:keydown on:click on:dblclick>
+<div class="combatant-item" class:selected={isSelected} class:unselected={!isSelected} class:highlighted={isHighlighted}
+     on:keydown on:click on:dblclick>
    <img class="combatant-icon" src="{icon}" alt="{icon}"/>
    <div class="combatant-name">{name}</div>
 </div>
@@ -31,6 +33,12 @@
    .selected {
       border: 2px solid $primary-color;
       animation: zoom-in 0.1s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+   }
+
+   .highlighted {
+      border: 2px solid $secondary-color;
+      filter: none;
+      animation: zoom-in-half 0.1s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
    }
 
    .combatant-item:active {
