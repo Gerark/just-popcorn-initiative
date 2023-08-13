@@ -6,7 +6,6 @@ Blablabla
 
 ### Bugs:
 
-- Error when triggering renderCombatTracker5e for players
 - When the Selection Window is open and there's a change of scene ( View Scene or Activate ) the window should be closed.
 - When a Selection Window is opened we should always gather the combat id to know which combat we're talking about. If the GM is looking another scene the player can't make any request.
 
@@ -19,6 +18,8 @@ Blablabla
 - Icons to identify combatant owned by players ( show the circle/color similar to what happens with targeting? )
 - List all combatant owned by players before the npc.
 - Sorting options for players/gm. Gm can sort by level/stats too?
+
+- Add Localizations ( Error/Warning messages + UI )
 
 - Override the End turn button for players.
 - Expose macro to open the selection window.
