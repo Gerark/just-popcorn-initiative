@@ -60,24 +60,33 @@ export class ModuleAPI
         }
     }
 
-    focusCombatantToken(combatantId)
+    panToCombatantToken(combatantId, duration = 1000)
     {
-        const combatant = getCombatantById(game.combat, combatantId);
-        if (!combatant)
+        const { result, token } = this._tryGetToken(combatantId);
+        if (result)
         {
-            warningNotification(`Can't focus the token. Select a combatant from the grid first.`);
-            return;
+            const scale = Math.max(0.6, canvas.stage.scale.x);
+            canvas.animatePan({ x: token.document.x, y: token.document.y, scale, duration });
         }
+    }
 
-        const token = game.canvas.tokens.objects.children.find((x) => x.id === combatant.tokenId);
-        if (!token)
+    highlightCombatantToken(event, combatantId, highlight = true)
+    {
+        const { result, token } = this._tryGetToken(combatantId);
+        if (result)
         {
-            warningNotification(`Can't focus the token. No token can be found in the current canvas.`);
-            return;
+            if (highlight)
+            {
+                if (!token.controlled)
+                {
+                    token._onHoverIn(event, { hoverOutOthers: true });
+                }
+            }
+            else
+            {
+                token._onHoverOut(event);
+            }
         }
-
-        const scale = Math.max(1, canvas.stage.scale.x);
-        canvas.animatePan({ x: token.document.x, y: token.document.y, scale, duration: 1000 });
     }
 
     showSelectionWindowOrPassTurn()
@@ -266,5 +275,25 @@ If you are the last or the second last combatant in the round the popcorn initia
             });
             return list;
         });
+    }
+
+    _tryGetToken(combatantId)
+    {
+        let result = true;
+        const combatant = getCombatantById(game.combat, combatantId);
+        if (!combatant)
+        {
+            warningNotification(`Can't focus the token. Can't find a token for the selected combatant.`);
+            result = false;
+        }
+
+        const token = game.canvas.tokens.objects.children.find((x) => x.id === combatant.tokenId);
+        if (!token)
+        {
+            warningNotification(`Can't focus the token. No token with that id can be found in the current canvas.`);
+            result = false;
+        }
+
+        return { result, token };
     }
 }

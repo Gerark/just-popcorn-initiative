@@ -6,7 +6,7 @@
 </script>
 
 <div class="combatant-item" class:selected={isSelected} class:unselected={!isSelected} class:highlighted={isHighlighted}
-     on:keydown on:click on:dblclick>
+     on:keydown on:click on:dblclick on:mouseenter on:mouseexit>
    <img class="combatant-icon" src="{icon}" alt="{icon}"/>
    <div class="combatant-name">{name}</div>
 </div>

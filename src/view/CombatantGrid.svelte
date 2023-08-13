@@ -16,6 +16,16 @@
       dispatch("itemDoubleClick", combatant);
    }
 
+   function _onItemMouseEnter(combatant)
+   {
+      dispatch("itemMouseEnter", combatant);
+   }
+
+   function _onItemMouseExit(combatant)
+   {
+      dispatch("itemMouseExit", combatant);
+   }
+
 </script>
 
 <main>
@@ -29,6 +39,8 @@
           icon="{combatant.icon}"
           on:click={(ev) => _onItemClick(combatant)}
           on:dblclick={(ev) => _onItemDoubleClick(combatant)}
+          on:mouseenter={(ev) => _onItemMouseEnter(combatant)}
+          on:mouseexit={(ev) => _onItemMouseExit(combatant)}
          />
       {/each}
    </div>

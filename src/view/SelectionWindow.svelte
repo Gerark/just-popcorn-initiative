@@ -18,9 +18,14 @@
    const { application, moduleAPI } = getContext('#external');
    const position = application.position;
 
-   function _focusToken()
+   function _panToToken(id)
    {
-      moduleAPI.focusCombatantToken($selectedCombatantId);
+      moduleAPI.panToCombatantToken(id);
+   }
+
+   function _highlightToken(event, id, highlight = true)
+   {
+      moduleAPI.highlightCombatantToken(event, id, highlight);
    }
 
    function _onConfirm()
@@ -39,8 +44,12 @@
          <CombatantList combatants="{$previousCombatants}"></CombatantList>
          <CombatantGrid combatants="{$selectableCombatants}"
                         on:itemClick={(e) => $selectedCombatantId = e.detail.id}
-                        on:itemDoubleClick={(e) => { $selectedCombatantId = e.detail.id; _focusToken() }}></CombatantGrid>
-         <CombatantSelectionToolbox on:focusToken={_focusToken}></CombatantSelectionToolbox>
+                        on:itemDoubleClick={(e) => { $selectedCombatantId = e.detail.id; _panToToken($selectedCombatantId) }}
+                        on:itemMouseEnter={(e) => { _highlightToken(e, e.detail.id, true); }}
+                        on:itemMouseExit={(e) => { _highlightToken(e, e.detail.id, false); }}>
+         </CombatantGrid>
+         <CombatantSelectionToolbox
+          on:focusToken={() => _panToToken($selectedCombatantId) }></CombatantSelectionToolbox>
       </div>
       {#if $isAnyCombatantSelected}
          <div class="drag-target selectButtonContainer">

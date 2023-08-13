@@ -1,5 +1,6 @@
 import { writable, derived } from "svelte/store";
 
+export const focusTokenWhenHighlightingActors = writable(true);
 export const selectableCombatants = writable([]);
 export const previousCombatants = writable([]);
 export const selectedCombatantId = _createSelectedCombatantId();
