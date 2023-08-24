@@ -60,7 +60,14 @@ export class ModuleAPI
             return;
         }
 
-        this.selectionWindow = new SelectionWindowApplication().render(true, { focus: true });
+        if (this.selectionWindow)
+        {
+            this.selectionWindow.render();
+        }
+        else
+        {
+            this.selectionWindow = new SelectionWindowApplication().render(true, { focus: true });
+        }
         this._updateCombatantsData(currentCombat);
     }
 

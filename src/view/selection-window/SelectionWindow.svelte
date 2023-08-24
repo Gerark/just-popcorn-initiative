@@ -8,13 +8,12 @@
       isAnyCombatantSelected,
       selectedCombatantId,
       toolboxActions,
-      isSelectionWindowHovered, isTokenPickerRunning, currentTokenPickerTarget
+      isSelectionWindowHovered, isTokenPickerRunning
    } from "../../ModuleStore.js";
    import CombatantList from "./CombatantList.svelte";
    import CombatantGrid from "./CombatantGrid.svelte";
    import CombatantSelectionToolbox from "./Toolbox.svelte";
    import { CanvasInteraction } from "../../CanvasInteraction.js";
-   import SelectableActor from "./SelectableActor.svelte";
    import TokenPickerWatermark from "./TokenPickerWatermark.svelte";
 
    export let elementRoot;
@@ -75,7 +74,7 @@
       </div>
       {#if $isAnyCombatantSelected}
          <div class="drag-target selectButtonContainer">
-            <button on:click={_onConfirm}>Confirm</button>
+            <button class="button" on:click={_onConfirm}>Confirm</button>
          </div>
       {/if}
    </div>

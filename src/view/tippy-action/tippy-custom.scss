@@ -1,0 +1,97 @@
+@import "../../global-styles";
+@import 'tippy.js/dist/svg-arrow.css';
+
+.tippy-box[data-theme~='just'][data-animation=fade][data-state=hidden] {
+  opacity: 0
+}
+
+[data-tippy-root][data-theme~='just'] {
+  max-width: calc(100vw - 10px)
+}
+
+.tippy-box[data-theme~='just'] {
+  position: relative;
+  background-color: $bg-color-primary;
+  color: $primary-color;
+  border-radius: 10px;
+  font-size: 14px;
+  line-height: 1.4;
+  white-space: normal;
+  outline: 0;
+  transition-property: transform, visibility, opacity;
+  padding: 5px;
+  border: 1.5px solid $primary-color;
+}
+
+.tippy-box[data-theme~='just'][data-placement^=top] > .tippy-arrow {
+  bottom: 0
+}
+
+.tippy-box[data-theme~='just'][data-placement^=top] > .tippy-arrow:before {
+  bottom: -7px;
+  left: 0;
+  border-width: 8px 8px 0;
+  border-top-color: initial;
+  transform-origin: center top
+}
+
+.tippy-box[data-theme~='just'][data-placement^=bottom] > .tippy-arrow {
+  top: 0
+}
+
+.tippy-box[data-theme~='just'][data-placement^=bottom] > .tippy-arrow:before {
+  top: -7px;
+  left: 0;
+  border-width: 0 8px 8px;
+  border-bottom-color: initial;
+  transform-origin: center bottom
+}
+
+.tippy-box[data-theme~='just'][data-placement^=left] > .tippy-arrow {
+  right: 0
+}
+
+.tippy-box[data-theme~='just'][data-placement^=left] > .tippy-arrow:before {
+  border-width: 8px 0 8px 8px;
+  border-left-color: initial;
+  right: -7px;
+  transform-origin: center left
+}
+
+.tippy-box[data-theme~='just'][data-placement^=right] > .tippy-arrow {
+  left: -10px
+}
+
+.tippy-box[data-theme~='just'][data-placement^=right] > .tippy-arrow:before {
+  left: -7px;
+  border-width: 8px 8px 8px 0;
+  border-right-color: initial;
+  transform-origin: center right
+}
+
+.tippy-box[data-theme~='just'][data-inertia][data-state=visible] {
+  transition-timing-function: cubic-bezier(.54, 1.5, .38, 1.11)
+}
+
+.tippy-arrow[data-theme~='just'] {
+  width: 16px;
+  height: 16px;
+  color: $bg-color-primary;
+}
+
+.tippy-arrow[data-theme~='just']:before {
+  content: "";
+  position: absolute;
+  border-color: transparent;
+  border-style: solid
+}
+
+.tippy-content[data-theme~='just'] {
+  position: relative;
+  padding: 5px 9px;
+  z-index: 1
+}
+
+.tippy-box[data-theme~='just'] .tippy-svg-arrow {
+  fill: $primary-color;
+}

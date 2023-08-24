@@ -50,15 +50,23 @@ export class StoreUpdater
     static getToolboxActions(combatantId)
     {
         const actions = [];
-        actions.push(
-            { icon: "fa-solid fa-circle-xmark", command: () => { ModuleAPI.instance.closeSelectionWindow(); } });
-        actions.push({ icon: "fa-solid fa-eye-dropper", command: () => { isTokenPickerRunning.set(true); } });
+        actions.push({
+            icon: "fa-solid fa-circle-xmark",
+            command: () => { ModuleAPI.instance.closeSelectionWindow(); },
+            tooltip: "Close"
+        });
+        actions.push({
+            icon: "fa-solid fa-eye-dropper",
+            command: () => { isTokenPickerRunning.set(true); },
+            tooltip: "Select from Token"
+        });
 
         if (combatantId !== "-1")
         {
             actions.push({
                 icon: "fa-solid fa-bullseye",
-                command: () => { CanvasInteraction.panToCombatantToken(combatantId); }
+                command: () => { CanvasInteraction.panToCombatantToken(combatantId); },
+                tooltip: "Zoom on Selected Combatant"
             });
         }
         return actions;

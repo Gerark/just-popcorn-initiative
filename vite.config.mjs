@@ -1,9 +1,11 @@
-import { svelte }    from '@sveltejs/vite-plugin-svelte';
-import resolve       from '@rollup/plugin-node-resolve'; // This resolves NPM modules from node_modules.
-import preprocess    from 'svelte-preprocess';
+import { svelte } from '@sveltejs/vite-plugin-svelte';
+import resolve from '@rollup/plugin-node-resolve'; // This resolves NPM modules from node_modules.
+import replace from '@rollup/plugin-replace';
+import preprocess from 'svelte-preprocess';
 import {
    postcssConfig,
-   terserConfig }    from '@typhonjs-fvtt/runtime/rollup';
+   terserConfig
+} from '@typhonjs-fvtt/runtime/rollup';
 
 // ATTENTION!
 // Please modify the below variables: s_PACKAGE_ID and s_SVELTE_HASH_ID appropriately.
@@ -89,7 +91,8 @@ export default () =>
       optimizeDeps: {
          esbuildOptions: {
             target: 'es2022'
-         }
+         },
+         include: ['tippy.js']
       },
 
       plugins: [
@@ -105,8 +108,11 @@ export default () =>
                scss: {
                   prependData: `@import './src/global-styles.scss';`
                }
-            })}),
-
+            })
+         }),
+         replace({
+            'process.env.NODE_ENV': JSON.stringify('production'),
+         }),
          resolve(s_RESOLVE_CONFIG)  // Necessary when bundling npm-linked packages.
       ]
    };

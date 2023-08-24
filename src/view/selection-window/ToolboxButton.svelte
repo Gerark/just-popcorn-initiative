@@ -1,14 +1,20 @@
 <script>
    import { createEventDispatcher } from "svelte";
+   import { tooltip } from "../tippy-action/tooltip.js";
+   import { roundArrow } from "tippy.js";
 
    const dispatch = createEventDispatcher();
 
    export let icon;
    export let command;
+   export let tooltipText;
 </script>
 
 <main>
-   <button class="toolboxButton {icon}" on:click={() => { dispatch("actionRequested", command) }}></button>
+   <button
+    class="button toolboxButton {icon}"
+    on:click={() => { dispatch("actionRequested", command) }}
+    use:tooltip={{content: `${tooltipText}`, placement: 'right', theme: 'just', arrow: roundArrow}}></button>
 </main>
 
 <style lang="scss">

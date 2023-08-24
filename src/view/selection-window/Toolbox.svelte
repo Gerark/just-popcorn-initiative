@@ -8,7 +8,8 @@
    <span class="title">Tools</span>
    <div class="toolboxList">
       {#each actions as action}
-         <ToolboxButton icon="{action.icon}" command="{action.command}" on:actionRequested></ToolboxButton>
+         <ToolboxButton icon="{action.icon}" command="{action.command}" tooltipText="{action.tooltip}"
+                        on:actionRequested></ToolboxButton>
       {/each}
    </div>
 </main>

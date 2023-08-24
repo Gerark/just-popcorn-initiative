@@ -5,26 +5,26 @@ $secondary-disabled-color: #FFFFFF55;
 $bg-color-primary: #000000EE;
 $bg-color-secondary: #00000000;
 
-button {
+.button {
   background: $bg-color-primary;
   color: $primary-color;
   border-color: $primary-color;
 }
 
-button:hover {
+.button:hover {
   border-color: $secondary-color;
   color: $secondary-color;
   box-shadow: none;
 }
 
-button:active {
+.button:active {
   border-color: $secondary-color;
   color: $primary-color;
   box-shadow: none;
   scale: 0.98;
 }
 
-button:focus {
+.button:focus {
   border-color: $primary-color;
   color: $primary-color;
   box-shadow: none;
