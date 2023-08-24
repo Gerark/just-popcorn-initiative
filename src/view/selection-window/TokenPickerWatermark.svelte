@@ -1,14 +1,13 @@
 <script>
    import { currentTokenPickerTarget, isTokenPickerRunning } from "../../ModuleStore.js";
    import SelectableActor from "./SelectableActor.svelte";
+   import { locWindow } from "../../ModuleUtils.js";
 
 </script>
 
 <div class="tokenPickerWatermark" on:mouseenter on:mouseleave on:click>
    <div class="info">
-      <span>Select a Token inside the canvas</span>
-      <span>or</span>
-      <span>Press here to cancel</span>
+      {@html locWindow(`combatant-picker.title`)}
    </div>
    <SelectableActor icon="{$currentTokenPickerTarget && $currentTokenPickerTarget.icon}"
                     name="{$currentTokenPickerTarget ? $currentTokenPickerTarget.name : ``}"

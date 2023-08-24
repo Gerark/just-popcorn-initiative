@@ -2,6 +2,7 @@
    import { getContext } from 'svelte';
    import { EmptyApplicationShell } from '#runtime/svelte/component/core';
    import { draggable } from '#runtime/svelte/store/position';
+   import { locWindow } from "../../ModuleUtils.js";
    import {
       selectableCombatants,
       previousCombatants,
@@ -15,6 +16,7 @@
    import CombatantSelectionToolbox from "./Toolbox.svelte";
    import { CanvasInteraction } from "../../CanvasInteraction.js";
    import TokenPickerWatermark from "./TokenPickerWatermark.svelte";
+   import SimpleButton from "./SimpleButton.svelte";
 
    export let elementRoot;
 
@@ -57,7 +59,6 @@
 
 <EmptyApplicationShell bind:elementRoot>
    <div class="drag-target mainContent" use:draggable={{ position, hasTargetClassList: ['drag-target'] }}
-        on:contextmenu={() => moduleAPI.closeSelectionWindow() }
         on:mouseenter={(e) => _onWindowHover(true)}
         on:mouseleave={(e) => _onWindowHover(false)}
         role=application>
@@ -72,11 +73,14 @@
          <CombatantSelectionToolbox actions="{$toolboxActions}"
                                     on:actionRequested={_onActionRequested}></CombatantSelectionToolbox>
       </div>
-      {#if $isAnyCombatantSelected}
-         <div class="drag-target selectButtonContainer">
-            <button class="button" on:click={_onConfirm}>Confirm</button>
-         </div>
-      {/if}
+      <div class="drag-target modalButtonContainer">
+         {#if $isAnyCombatantSelected}
+            <SimpleButton text="{locWindow(`confirm.button`)}" icon="check"
+                          on:click={_onConfirm}/>
+         {/if}
+         <SimpleButton text="{locWindow(`close.button`)}" icon="xmark" isCancelButton="true"
+                       on:click={ () => moduleAPI.closeSelectionWindow() }/>
+      </div>
    </div>
    {#if $isTokenPickerRunning}
       <TokenPickerWatermark
@@ -111,9 +115,15 @@
    }
 
    .selectButtonContainer {
-      flex-grow: 4;
       display: flex;
-      flex-flow: column nowrap;
-      justify-content: flex-end;
+      flex-flow: row nowrap;
+      min-width: 100px;
+   }
+
+   .modalButtonContainer {
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: center;
+      gap: 5px;
    }
 </style>

@@ -6,7 +6,7 @@ import {
     selectableCombatants,
     selectedCombatantId
 } from "./ModuleStore.js";
-import { ModuleUtils } from "./ModuleUtils.js";
+import { locWindow, ModuleUtils } from "./ModuleUtils.js";
 import { ModuleAPI } from "./ModuleAPI.js";
 import { CanvasInteraction } from "./CanvasInteraction.js";
 
@@ -51,14 +51,9 @@ export class StoreUpdater
     {
         const actions = [];
         actions.push({
-            icon: "fa-solid fa-circle-xmark",
-            command: () => { ModuleAPI.instance.closeSelectionWindow(); },
-            tooltip: "Close"
-        });
-        actions.push({
             icon: "fa-solid fa-eye-dropper",
             command: () => { isTokenPickerRunning.set(true); },
-            tooltip: "Select from Token"
+            tooltip: "tools.select-from-token.tooltip"
         });
 
         if (combatantId !== "-1")
@@ -66,7 +61,7 @@ export class StoreUpdater
             actions.push({
                 icon: "fa-solid fa-bullseye",
                 command: () => { CanvasInteraction.panToCombatantToken(combatantId); },
-                tooltip: "Zoom on Selected Combatant"
+                tooltip: "tools.zoom-combatant.tooltip"
             });
         }
         return actions;

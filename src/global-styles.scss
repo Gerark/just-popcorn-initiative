@@ -2,6 +2,7 @@ $primary-color: #FF8800;
 $primary-disabled-color: #FF8800AA;
 $secondary-color: #FFFFFF;
 $secondary-disabled-color: #FFFFFF55;
+$error-color: #FF3300;
 $bg-color-primary: #000000EE;
 $bg-color-secondary: #00000000;
 
@@ -9,6 +10,11 @@ $bg-color-secondary: #00000000;
   background: $bg-color-primary;
   color: $primary-color;
   border-color: $primary-color;
+}
+
+.button.cancel {
+  border-color: $error-color;
+  color: $error-color;
 }
 
 .button:hover {
@@ -28,4 +34,13 @@ $bg-color-secondary: #00000000;
   border-color: $primary-color;
   color: $primary-color;
   box-shadow: none;
+}
+
+.button.icon {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  gap: 5px;
 }

@@ -18,31 +18,31 @@ export class NotificationUtils
         switch (reason)
         {
         case ReasonType.EndTurnNoCombat:
-            this.warning(`Can't end turn. No combat is currently active.`);
+            this.warning(locSystem(`EndTurnNoCombat`));
             break;
         case ReasonType.EndTurnNoCombatantPlaying:
-            this.warning(`Can't end turn. No combatant is currently playing.`);
+            this.warning(locSystem(`EndTurnNoCombatantPlaying`));
             break;
         case ReasonType.EndTurnActorIsNotValid:
-            this.error(`Can't end turn. The current actor in combat is not valid.`);
+            this.warning(locSystem(`EndTurnActorIsNotValid`));
             break;
         case ReasonType.EndTurnNotYourTurn:
-            this.warning(`Can't end turn. It's not your turn yet.`);
+            this.warning(locSystem(`EndTurnNotYourTurn`));
             break;
         case ReasonType.EndTurnInvalidSelectedCombatant:
-            this.warning("Can't end turn. The selected combatant can't be found.");
+            this.warning(locSystem(`EndTurnInvalidSelectedCombatant`));
             break;
         case ReasonType.EndTurnLastOrSecondLast:
-            this.warning("Can't pass turn to another combatant. The current combatant is the last on this round.");
+            this.warning(locSystem(`EndTurnLastOrSecondLast`));
             break;
         case ReasonType.EndTurnInvalidCombatId:
-            this.warning("A request to end turn can't be performed. The combatId provided is not valid.");
+            this.warning(locSystem(`EndTurnInvalidCombatId`));
             break;
         case ReasonType.TryGetTokenInvalidId:
-            this.warning(`Can't find the token. The provided combatant id can't be found.`);
+            this.warning(locSystem(`TryGetTokenInvalidId`));
             break;
         case ReasonType.TryGetTokenInvalidCombatantId:
-            this.warning("Can't find the token. The provided token id is invalid.");
+            this.warning(locSystem(`TryGetTokenInvalidCombatantId`));
             break;
         }
     }
@@ -160,4 +160,31 @@ If you are the last or the second last combatant in the round the popcorn initia
 
         return { shouldClose: reason !== ReasonType.None, reason };
     }
+}
+
+/**
+ *
+ * @param localizationKey
+ */
+export function locWindow(localizationKey)
+{
+    return localize(`Window.${localizationKey}`);
+}
+
+/**
+ *
+ * @param localizationKey
+ */
+export function locSystem(localizationKey)
+{
+    return localize(`SystemMessage.${localizationKey}`);
+}
+
+/**
+ *
+ * @param localizationKey
+ */
+function localize(localizationKey)
+{
+    return game.i18n.localize(`JPI.${localizationKey}`);
 }

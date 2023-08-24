@@ -1,5 +1,25 @@
 {
-  "JustPopcornInitiative": {
-    "title": "Choose Next"
+  "JPI" : {
+    "Window" : {
+      "previous-actors.title" : "Previous Actors",
+      "selectable-actors.title" : "Selectable Actors",
+      "tools.title" : "Tools",
+      "tools.select-from-token.tooltip" : "Select from Token",
+      "tools.zoom-combatant.tooltip" : "Zoom on Selected Combatant",
+      "combatant-picker.title" : "Select a Token inside the canvas <span>or</span> Press here to cancel",
+      "confirm.button" : "Confirm",
+      "close.button" : "Close"
+    },
+    "SystemMessage" : {
+      "EndTurnNoCombat" : "Can't end turn. No combat is currently active.",
+      "EndTurnNoCombatantPlaying" : "Can't end turn. No combatant is currently playing.",
+      "EndTurnActorIsNotValid" : "Can't end turn. The current actor in combat is not valid.",
+      "EndTurnNotYourTurn" : "Can't end turn. It's not your turn yet.",
+      "EndTurnInvalidSelectedCombatant" : "Can't end turn. The selected combatant can't be found.",
+      "EndTurnLastOrSecondLast" : "Can't pass turn to another combatant. The current combatant is the last on this round.",
+      "EndTurnInvalidCombatId" : "A request to end turn can't be performed. The combatId provided is not valid.",
+      "TryGetTokenInvalidId" : "Can't find the token. The provided combatant id can't be found.",
+      "TryGetTokenInvalidCombatantId" : "Can't find the token. The provided token id is invalid."
+    }
   }
 }

@@ -1,14 +1,15 @@
 <script>
    import ToolboxButton from "./ToolboxButton.svelte";
+   import { locWindow } from "../../ModuleUtils.js";
 
    export let actions = [];
 </script>
 
 <main>
-   <span class="title">Tools</span>
+   <span class="title">{locWindow(`tools.title`)}</span>
    <div class="toolboxList">
       {#each actions as action}
-         <ToolboxButton icon="{action.icon}" command="{action.command}" tooltipText="{action.tooltip}"
+         <ToolboxButton icon="{action.icon}" command="{action.command}" tooltipText="{locWindow(action.tooltip)}"
                         on:actionRequested></ToolboxButton>
       {/each}
    </div>

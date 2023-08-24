@@ -1,12 +1,13 @@
 <script>
    import SimpleActor from "./SimpleActor.svelte";
+   import { locWindow } from "../../ModuleUtils.js";
 
    export let combatants;
 
 </script>
 
 <main>
-   <span class="drag-target title">Previous Actors</span>
+   <span class="drag-target title">{locWindow(`previous-actors.title`)}</span>
    <div class="drag-target list">
       {#each combatants as combatant (combatant.id)}
          <SimpleActor

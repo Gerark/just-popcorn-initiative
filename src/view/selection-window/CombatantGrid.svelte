@@ -1,6 +1,7 @@
 <script>
    import SelectableActor from "./SelectableActor.svelte";
    import { createEventDispatcher } from "svelte";
+   import { locWindow } from "../../ModuleUtils.js";
 
    export let combatants;
 
@@ -29,7 +30,7 @@
 </script>
 
 <main>
-   <span class="drag-target title">Selectable Actors</span>
+   <span class="drag-target title">{locWindow(`selectable-actors.title`)}</span>
    <div class="drag-target grid">
       {#each combatants as combatant (combatant.id)}
          <SelectableActor
