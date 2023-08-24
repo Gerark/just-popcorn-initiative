@@ -36,7 +36,7 @@
 
    .combatant-name {
       color: $primary-color;
-      width: 90px;
+      width: 89px;
       text-align: left;
       font-size: 12px;
       overflow: hidden;

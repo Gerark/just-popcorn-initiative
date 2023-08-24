@@ -34,6 +34,8 @@
       flex: 1 1;
       display: flex;
       flex-flow: column nowrap;
+      align-items: center;
+      align-content: center;
       gap: 5px;
       padding: 0px 5px 0 0;
       overflow: auto;

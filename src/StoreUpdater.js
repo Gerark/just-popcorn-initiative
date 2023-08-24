@@ -140,6 +140,6 @@ export class StoreUpdater
             }
         }
 
-        previousCombatants.set(list);
+        previousCombatants.set(list.reverse());
     }
 }
