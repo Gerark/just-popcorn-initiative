@@ -1,3 +1,6 @@
+import { canSelectWhenRoundIsOver } from "./ModuleStore.js";
+import { get as svelteGet } from "svelte/store";
+
 export const ReasonType = {
     None: -1,
     EndTurnNoCombat: 0,
@@ -59,7 +62,10 @@ export class NotificationUtils
 
     static errorPromise(message)
     {
-        return new Promise(() => { throw new Error(message); });
+        return new Promise(() =>
+        {
+            throw new Error(message);
+        });
     }
 
     static _moduleMessage(message)
@@ -72,7 +78,10 @@ export class ModuleUtils
 {
     static getCombatantById(combat, combatantId)
     {
-        return combat.turns.find((x) => { return x.id === combatantId; });
+        return combat.turns.find((x) =>
+        {
+            return x.id === combatantId;
+        });
     }
 
     static getCombatById(combatId)
@@ -152,9 +161,14 @@ If you are the last or the second last combatant in the round the popcorn initia
             {
                 reason = ReasonType.EndTurnNotYourTurn;
             }
-            else if (combat.current.turn + 1 >= combat.turns.length || combat.current.turn + 2 >= combat.turns.length)
+            else
             {
-                reason = ReasonType.EndTurnLastOrSecondLast;
+                const isLast = combat.current.turn + 1 >= combat.turns.length;
+                const isSecondLast = combat.current.turn + 2 === combat.turns.length;
+                if (isSecondLast || (isLast && !svelteGet(canSelectWhenRoundIsOver)))
+                {
+                    reason = ReasonType.EndTurnLastOrSecondLast;
+                }
             }
         }
 

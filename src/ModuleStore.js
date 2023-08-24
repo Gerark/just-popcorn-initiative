@@ -8,6 +8,7 @@ export const isSelectionWindowHovered = writable(false);
 export const isTokenPickerRunning = writable(false);
 export const previousActorsDrawerOpen = writable(true);
 export const selectedCombatantId = _createSelectedCombatantId();
+export const canSelectWhenRoundIsOver = writable(true);
 export const isAnyCombatantSelected = derived(selectableCombatants, ($selectableCombatants) =>
 {
     return $selectableCombatants.some((x) =>

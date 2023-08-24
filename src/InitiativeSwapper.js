@@ -1,5 +1,7 @@
 import { ModuleUtils, NotificationUtils, ReasonType } from "./ModuleUtils.js";
 import { moduleSocket } from "./ModuleSocket.js";
+import { canSelectWhenRoundIsOver } from "./ModuleStore.js";
+import { get as svelteGet } from "svelte/store";
 
 /**
  *
@@ -16,9 +18,17 @@ export function performSwap(nextCombatantId, combatId)
         return;
     }
 
+    const isLast = combat.turn + 1 === combat.turns.length;
     _swapCombatantTurn(first, second, combat).then(async () =>
     {
-        await combat.nextTurn();
+        if (isLast)
+        {
+            await combat.nextRound();
+        }
+        else
+        {
+            await combat.nextTurn();
+        }
         await moduleSocket.executeForEveryone("closeSelectionWindow");
     }
     );
@@ -47,13 +57,25 @@ function _prepareSwapCombatant(combatId, nextCombatantId)
         {
             reason = ReasonType.EndTurnInvalidSelectedCombatant;
         }
-        else if (combat.turn + 1 > combat.turns.length - 1)
-        {
-            reason = ReasonType.EndTurnLastOrSecondLast;
-        }
         else
         {
-            second = combat.turns[combat.turn + 1];
+            const isSecondLast = combat.turn + 2 === combat.turns.length;
+            const isLast = combat.turn + 1 >= combat.turns.length;
+            if (isSecondLast || (isLast && !svelteGet(canSelectWhenRoundIsOver)))
+            {
+                reason = ReasonType.EndTurnLastOrSecondLast;
+            }
+            else
+            {
+                if (combat.turn + 1 >= combat.turns.length)
+                {
+                    second = combat.turns[0];
+                }
+                else
+                {
+                    second = combat.turns[combat.turn + 1];
+                }
+            }
         }
     }
 
@@ -74,7 +96,7 @@ async function _swapCombatantTurn(firstCombatant, secondCombatant, combat)
     {
         const currentCombatant = combat.turns[combat.turn];
         if (secondCombatant.initiative === firstCombatant.initiative ||
-       secondCombatant.initiative >= currentCombatant.initiative)
+            secondCombatant.initiative >= currentCombatant.initiative)
         {
             await _rearrangeCombatants(combat);
         }

@@ -52,7 +52,10 @@ export class StoreUpdater
         const actions = [];
         actions.push({
             icon: "fa-solid fa-eye-dropper",
-            command: () => { isTokenPickerRunning.set(true); },
+            command: () =>
+            {
+                isTokenPickerRunning.set(true);
+            },
             tooltip: "tools.select-from-token.tooltip"
         });
 
@@ -60,7 +63,10 @@ export class StoreUpdater
         {
             actions.push({
                 icon: "fa-solid fa-bullseye",
-                command: () => { CanvasInteraction.panToCombatantToken(combatantId); },
+                command: () =>
+                {
+                    CanvasInteraction.panToCombatantToken(combatantId);
+                },
                 tooltip: "tools.zoom-combatant.tooltip"
             });
         }
@@ -76,7 +82,8 @@ export class StoreUpdater
             {
                 const currentCombat = game.combat;
                 const tokenId = currentToken.id;
-                for (let i = currentCombat.turn; i < currentCombat.turns.length; i++)
+                const turn = currentCombat.turn + 1 === currentCombat.turns.length ? 0 : currentCombat.turn;
+                for (let i = turn; i < currentCombat.turns.length; i++)
                 {
                     const combatant = currentCombat.turns[i];
                     if (combatant.tokenId === tokenId)
@@ -93,9 +100,12 @@ export class StoreUpdater
     static _updateSelectableCombatants(combat)
     {
         const list = [];
-        const turn = combat.turn;
+        let turn = combat.turn;
         if (turn != null)
         {
+            // If we're on the last combatant we show all combatant starting from turn 0
+            turn = turn + 1 === combat.turns.length ? -1 : turn;
+
             for (let i = turn + 1; i < combat.turns.length; i++)
             {
                 const combatant = combat.turns[i];
@@ -126,7 +136,7 @@ export class StoreUpdater
     {
         const list = [];
         const turn = combat.turn;
-        if (turn != null)
+        if (turn != null && turn + 1 !== combat.turns.length)
         {
             for (let i = 0; i <= turn && i < combat.turns.length; i++)
             {
