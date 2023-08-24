@@ -1,23 +1,11 @@
 ## Just Popcorn Initiative:
 
-Blablabla
-
-## Todo:
-
-### Bugs:
--
-
 ### Features:
-
-- Invisible/Unknown enemies shouldn't be listed for players who shouldn't see them ( more info to collect on this topic )
-- Sorting options for players/gm. Gm can sort by level/stats too?
-
 - Override the End turn button for players.
 - Expose macro to open the selection window.
 - Configuration option should be reachable from the Selection window.
 
 - Play animation when showing the Selection Window - Slide In/Slide Out
-- Selection Window should be close without right clicking ( X button or by confirm ). The x button could be a tool icon
 - Possibility to ask for initiative rolls everytime a round is over
 - When the player is the last one of the round he can select any of the players who start the round if the "Initiative Roll for each round" is disabled. 
 
