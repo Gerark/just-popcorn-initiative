@@ -9,7 +9,7 @@
       isAnyCombatantSelected,
       selectedCombatantId,
       toolboxActions,
-      isSelectionWindowHovered, isTokenPickerRunning
+      isSelectionWindowHovered, isTokenPickerRunning, previousActorsDrawerOpen
    } from "../../ModuleStore.js";
    import CombatantList from "./CombatantList.svelte";
    import CombatantGrid from "./CombatantGrid.svelte";
@@ -17,6 +17,7 @@
    import { CanvasInteraction } from "../../CanvasInteraction.js";
    import TokenPickerWatermark from "./TokenPickerWatermark.svelte";
    import SimpleButton from "./SimpleButton.svelte";
+   import SimpleDrawer from "./SimpleDrawer.svelte";
 
    export let elementRoot;
 
@@ -63,7 +64,11 @@
         on:mouseleave={(e) => _onWindowHover(false)}
         role=application>
       <div class="drag-target content">
-         <CombatantList combatants="{$previousCombatants}"></CombatantList>
+         <div class="drag-target prevActorContainer">
+            <SimpleDrawer bind:isOpen={$previousActorsDrawerOpen}>
+               <CombatantList combatants="{$previousCombatants}"></CombatantList>
+            </SimpleDrawer>
+         </div>
          <CombatantGrid combatants="{$selectableCombatants}"
                         on:itemClick={(e) => $selectedCombatantId = e.detail.id}
                         on:itemDoubleClick={(e) => { $selectedCombatantId = e.detail.id; _panToToken($selectedCombatantId) }}
@@ -112,18 +117,19 @@
       align-items: flex-start;
       align-content: flex-start;
       gap: 5px;
+      flex: 1;
    }
 
-   .selectButtonContainer {
-      display: flex;
-      flex-flow: row nowrap;
-      min-width: 100px;
+   .prevActorContainer {
+      height: 100%;
+      flex: auto 0;
    }
 
    .modalButtonContainer {
       display: flex;
       flex-flow: row nowrap;
       justify-content: center;
+      margin-top: auto;
       gap: 5px;
    }
 </style>

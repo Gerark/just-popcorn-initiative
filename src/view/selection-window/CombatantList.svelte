@@ -21,13 +21,11 @@
 
 <style lang="scss">
    main {
-      height: 100%;
       display: flex;
       flex-flow: column nowrap;
       justify-content: right;
       align-items: flex-start;
       align-content: flex-start;
-      flex: 1 1;
       gap: 4px;
    }
 
@@ -37,8 +35,17 @@
       display: flex;
       flex-flow: column nowrap;
       gap: 5px;
-      padding: 5px;
+      padding: 0px 5px 0 0;
       overflow: auto;
+   }
+
+   .list::-webkit-scrollbar {
+      width: 2px;
+   }
+
+   .list::-webkit-scrollbar-thumb {
+      background-color: $primary-color;
+      outline: 1px solid $primary-color;
    }
 
    .title {

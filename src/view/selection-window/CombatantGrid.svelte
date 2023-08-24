@@ -61,12 +61,21 @@
       height: 100%;
       display: flex;
       flex-flow: row wrap;
-      justify-content: right;
+      justify-content: center;
       align-items: flex-start;
       align-content: flex-start;
       overflow: auto;
       gap: 5px 2px;
       padding: 5px;
+   }
+
+   .grid::-webkit-scrollbar {
+      width: 2px;
+   }
+
+   .grid::-webkit-scrollbar-thumb {
+      background-color: $primary-color;
+      outline: 1px solid $primary-color;
    }
 
    .title {
