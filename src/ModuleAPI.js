@@ -3,7 +3,12 @@ import { moduleSocket } from "./ModuleSocket.js";
 import { NotificationUtils, ModuleUtils, ReasonType } from "./ModuleUtils.js";
 import { StoreUpdater } from "./StoreUpdater.js";
 import { get as svelteGet } from "svelte/store";
-import { isSelectionWindowHovered, isTokenPickerRunning, selectedCombatantId } from "./ModuleStore.js";
+import {
+    isSelectionWindowHovered,
+    isTokenPickerRunning,
+    overrideEndTurnButton,
+    selectedCombatantId
+} from "./ModuleStore.js";
 
 export class ModuleAPI
 {
@@ -19,8 +24,18 @@ export class ModuleAPI
         Hooks.on("deleteCombatant", (ev) => this._updateCombatantsData(ev));
         Hooks.on("updateCombat", (ev) => this._updateCombatantsData(ev));
         Hooks.on("canvasTearDown", () => this.closeSelectionWindow());
-        Hooks.on("hoverToken", (token, isHover) => { this._onHoverToken(token, isHover); });
-        document.addEventListener("click", (e) => { StoreUpdater.onGlobalClick(); });
+        Hooks.on("hoverToken", (token, isHover) =>
+        {
+            this._onHoverToken(token, isHover);
+        });
+        Hooks.on("renderCombatTracker", (app, html/* , data*/) =>
+        {
+            this._onRenderCombatTracker(app, html);
+        });
+        document.addEventListener("click", (e) =>
+        {
+            StoreUpdater.onGlobalClick();
+        });
     }
 
     executePassTurnTo(combatantId)
@@ -93,6 +108,27 @@ export class ModuleAPI
             if (!svelteGet(isSelectionWindowHovered))
             {
                 StoreUpdater.highlightCombatantItem(token, isHover);
+            }
+        }
+    }
+
+    _onRenderCombatTracker(app, html)
+    {
+        if (svelteGet(overrideEndTurnButton))
+        {
+            const endTurnButtons = $("a.combat-control", html).filter(`[data-control="nextTurn"]`);
+            if (endTurnButtons.length > 0)
+            {
+                for (let i = 0; i < endTurnButtons.length; ++i)
+                {
+                    endTurnButtons[i].dataset.control = "popcornInitiativeNextTurn";
+                }
+
+                endTurnButtons.click((/* event*/) =>
+                {
+                    const module = game.modules.get("just-popcorn-initiative");
+                    module.api.showSelectionWindowOrPassTurn();
+                });
             }
         }
     }
