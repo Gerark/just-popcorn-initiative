@@ -20,7 +20,6 @@ Blablabla
 
 - Play animation when showing the Selection Window - Slide In/Slide Out
 - Selection Window should be close without right clicking ( X button or by confirm ). The x button could be a tool icon
-- No need for minimize/maximize opzios.
 - Possibility to ask for initiative rolls everytime a round is over
 - When the player is the last one of the round he can select any of the players who start the round if the "Initiative Roll for each round" is disabled. 
 
