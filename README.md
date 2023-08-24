@@ -12,8 +12,6 @@ Blablabla
 - Invisible/Unknown enemies shouldn't be listed for players who shouldn't see them ( more info to collect on this topic )
 - Sorting options for players/gm. Gm can sort by level/stats too?
 
-- Add Localizations ( Error/Warning messages + UI )
-
 - Override the End turn button for players.
 - Expose macro to open the selection window.
 - Configuration option should be reachable from the Selection window.
