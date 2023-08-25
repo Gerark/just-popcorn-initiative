@@ -1,9 +1,14 @@
 <script>
+   import { createEventDispatcher } from "svelte";
+
+   const dispatch = createEventDispatcher();
+
    export let isOpen = true;
 
    function toggle()
    {
       isOpen = !isOpen;
+      dispatch("toggle");
    }
 </script>
 

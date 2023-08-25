@@ -1,24 +1,37 @@
 <script>
     import { roundArrow } from "tippy.js";
     import { tooltip } from "../tippy-action/tooltip.js";
+    import SimpleButton from "../SimpleButton.svelte";
 
     export let name;
     export let description;
     export let storeValue;
+    export let command;
 
-    function toggleStoreValue()
+    function onClick()
     {
-        $storeValue = !$storeValue;
+        if (storeValue)
+        {
+            $storeValue = !$storeValue;
+        }
+        else if (command)
+        {
+            command();
+        }
     }
 </script>
 
-<div class="option"
-     use:tooltip={{content: `${description}`, placement: 'right', theme: 'just', arrow: roundArrow}}
-     on:click={() => { toggleStoreValue(); }}>
-    <span class="option-label">{name}</span>
-    <input class="option-value" type="checkbox" bind:checked={$storeValue}/>
-</div>
 
+<div class="option" class:button={command}
+     use:tooltip={{content: `${description}`, placement: 'right', theme: 'just', arrow: roundArrow}}
+     on:click={() => { onClick(); }}>
+    {#if storeValue}
+        <span class="option-label">{name}</span>
+        <input class="option-value" type="checkbox" bind:checked={$storeValue}/>
+    {:else if command}
+        <span class="option-label">{name}</span>
+    {/if}
+</div>
 
 <style lang="scss">
 
@@ -31,6 +44,11 @@
     border-radius: 10px;
     padding: 5px;
     cursor: default;
+    min-height: 30px;
+  }
+
+  .option.button {
+    cursor: pointer
   }
 
   .option:nth-child(even) {

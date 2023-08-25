@@ -46,6 +46,19 @@ export class StoreUpdater
             description: locSettings(`${Constants.Options.CanSelectWhenRoundIsOver}-description`),
             value: canSelectWhenRoundIsOver
         });
+        settings.push({ separator: true });
+
+        if (!ModuleAPI.instance.areCommonMacrosInstalled())
+        {
+            settings.push({
+                name: locSettings(`${Constants.Options.InstallCommonMacros}-title`),
+                description: locSettings(`${Constants.Options.InstallCommonMacros}-description`),
+                command: () =>
+                {
+                    ModuleAPI.instance.installCommonMacros();
+                }
+            });
+        }
         return settings;
     }
 

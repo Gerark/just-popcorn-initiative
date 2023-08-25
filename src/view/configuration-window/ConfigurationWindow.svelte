@@ -26,8 +26,12 @@
         <span class="drag-target title">{locSettings("configuration.title")}</span>
         <div class="drag-target setting-list">
             {#each $settings as setting}
-                <SettingItem name="{setting.name}" description="{setting.description}"
-                             storeValue="{setting.value}"></SettingItem>
+                {#if setting.separator}
+                    <div class="setting-separator"></div>
+                {:else}
+                    <SettingItem name="{setting.name}" description="{setting.description}"
+                                 storeValue="{setting.value}" command="{setting.command}"></SettingItem>
+                {/if}
             {/each}
         </div>
         <div class="drag-target modalButtonContainer">
@@ -62,5 +66,9 @@
     flex-direction: column;
     gap: 5px;
     flex: 1;
+  }
+
+  .setting-separator {
+    border-bottom: 1px solid $primary-color
   }
 </style>

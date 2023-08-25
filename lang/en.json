@@ -33,7 +33,9 @@
       "select-when-round-is-over-title": "Let the Last actor choose",
       "select-when-round-is-over-description": "Enable last actor to choose first combatant of next round.",
       "select-themselves-when-round-is-over-title": "Allow Self-Selection at the start of the next round",
-      "select-themselves-when-round-is-over-description": "Activate the option for a player to independently select themselves as the subsequent participant for consecutive rounds. This provides the player with the ability to maintain their position in the ongoing sequence if they so desire."
+      "select-themselves-when-round-is-over-description": "Activate the option for a player to independently select themselves as the subsequent participant for consecutive rounds. This provides the player with the ability to maintain their position in the ongoing sequence if they so desire.",
+      "install-common-macros-title": "Install common macros",
+      "install-common-macros-description": "New macros will be added to your libraries. One is used to select the next actor in the combat tracker and the other one used to open the configuration window"
     }
   }
 }

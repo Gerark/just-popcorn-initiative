@@ -3,10 +3,14 @@ import { get as svelteGet } from "svelte/store";
 
 export const Constants = {
     ModuleName: "just-popcorn-initiative",
+    ModuleTextName: "Just Popcorn Initiative",
+    ModuleTextNameAcronym: "JPI",
     Options: {
         OverrideNextTurnButton: "override-next-turn",
         CanSelectWhenRoundIsOver: "select-when-round-is-over",
-        CanLastActorSelectThemselves: "select-themselves-when-round-is-over"
+        CanLastActorSelectThemselves: "select-themselves-when-round-is-over",
+        PreviousActorsDrawerOpen: "previous-actor-drawer-open",
+        InstallCommonMacros: "install-common-macros"
     }
 };
 
@@ -186,6 +190,38 @@ If you are the last or the second last combatant in the round the popcorn initia
         }
 
         return { shouldClose: reason !== ReasonType.None, reason };
+    }
+
+    static async installMacro(name, code, icon)
+    {
+        let existingFolder = game.folders.contents.find((f) => f.name === Constants.ModuleTextName);
+        if (!existingFolder)
+        {
+            existingFolder = await Folder.create({
+                name: Constants.ModuleTextName,
+                type: "Macro"
+            }, {});
+        }
+
+        const macroData = {
+            name: `${Constants.ModuleTextNameAcronym} - ${name}`,
+            type: "script",
+            command: code,
+            img: icon,
+            folder: existingFolder
+        };
+
+        const existingMacro = game.macros.contents.find((m) => m.name === `${Constants.ModuleTextNameAcronym} - ${name}`);
+        if (!existingMacro)
+        {
+            await Macro.create(macroData, {});
+        }
+
+    }
+
+    static isMacroInstalled(name)
+    {
+        return game.macros.contents.find((m) => m.name === `${Constants.ModuleTextNameAcronym} - ${name}`);
     }
 }
 

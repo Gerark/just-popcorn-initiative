@@ -1,6 +1,11 @@
 import { locSettings } from "./ModuleUtils.js";
 import { Constants } from "./ModuleUtils.js";
-import { canSelectWhenRoundIsOver, overrideEndTurnButton, canLastActorSelectThemselves } from "./ModuleStore.js";
+import {
+    canSelectWhenRoundIsOver,
+    overrideEndTurnButton,
+    canLastActorSelectThemselves,
+    previousActorsDrawerOpen
+} from "./ModuleStore.js";
 import { ConfigurationWindowApplicationProxy } from "./view/configuration-window/ConfigurationWindowApplication.js";
 import { get as svelteGet } from "svelte/store";
 
@@ -8,21 +13,33 @@ export class ModuleSettings
 {
     static initialize()
     {
+        this._settings = [];
         this._registerSettings();
-        overrideEndTurnButton.set(this._getSettingValue(Constants.Options.OverrideNextTurnButton));
-        canSelectWhenRoundIsOver.set(this._getSettingValue(Constants.Options.CanSelectWhenRoundIsOver));
-        canLastActorSelectThemselves.set(this._getSettingValue(Constants.Options.CanLastActorSelectThemselves));
     }
 
     static async save()
     {
         let reloadRequired = false;
-        reloadRequired |= this._setSettingValue(Constants.Options.OverrideNextTurnButton, svelteGet(overrideEndTurnButton));
-        reloadRequired |= this._setSettingValue(Constants.Options.CanSelectWhenRoundIsOver, svelteGet(canSelectWhenRoundIsOver));
-        reloadRequired |= this._setSettingValue(Constants.Options.CanLastActorSelectThemselves, svelteGet(canLastActorSelectThemselves));
+        this._settings.forEach((x) =>
+        {
+            reloadRequired |= this._setSettingValue(x.id, svelteGet(x.storeValue));
+        });
         if (reloadRequired)
         {
             await SettingsConfig.reloadConfirm({ world: true });
+        }
+    }
+
+    static async saveSetting(storeValue)
+    {
+        const setting = this._settings.find((x) => { return x.storeValue === storeValue; });
+        if (setting != null)
+        {
+            const reloadRequired = this._setSettingValue(setting.id, svelteGet(setting.storeValue));
+            if (reloadRequired)
+            {
+                await SettingsConfig.reloadConfirm({ world: true });
+            }
         }
     }
 
@@ -38,28 +55,37 @@ export class ModuleSettings
         this._addSetting(Constants.Options.OverrideNextTurnButton, Boolean, true, true, overrideEndTurnButton);
         this._addSetting(Constants.Options.CanSelectWhenRoundIsOver, Boolean, true, false, canSelectWhenRoundIsOver);
         this._addSetting(Constants.Options.CanLastActorSelectThemselves, Boolean, false, false, canLastActorSelectThemselves);
+        this._addSetting(Constants.Options.PreviousActorsDrawerOpen, Boolean, true, false, previousActorsDrawerOpen);
     }
 
-    static _addSetting(id, type, defaultValue, requiresReload, storeVariable)
+    static _addSetting(id, type, defaultValue, requiresReload, storeValue, isGlobal = true)
     {
+        const setting = this._createSetting(id, requiresReload, storeValue);
+        this._settings.push(setting);
         game.settings.register(Constants.ModuleName, id, {
             name: locSettings(`${id}-title`),
             hint: locSettings(`${id}-description`),
-            scope: "world",
+            scope: isGlobal ? "world" : "client",
             config: false,
             default: defaultValue,
             requiresReload,
             type,
             onChange: (newValue) =>
             {
-                storeVariable.set(newValue);
+                storeValue.set(newValue);
             }
         });
+        storeValue.set(this._getSettingValue(id));
     }
 
     static _getSettingValue(id)
     {
         return game.settings.get(Constants.ModuleName, id);
+    }
+
+    static _createSetting(id, requiresReload, storeValue)
+    {
+        return { id, requiresReload, storeValue };
     }
 
     static _setSettingValue(id, value)
