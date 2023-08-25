@@ -1,6 +1,15 @@
 import { canSelectWhenRoundIsOver } from "./ModuleStore.js";
 import { get as svelteGet } from "svelte/store";
 
+export const Constants = {
+    ModuleName: "just-popcorn-initiative",
+    Options: {
+        OverrideNextTurnButton: "override-next-turn",
+        CanSelectWhenRoundIsOver: "select-when-round-is-over",
+        CanLastActorSelectThemselves: "select-themselves-when-round-is-over"
+    }
+};
+
 export const ReasonType = {
     None: -1,
     EndTurnNoCombat: 0,
@@ -11,7 +20,8 @@ export const ReasonType = {
     EndTurnInvalidSelectedCombatant: 5,
     EndTurnInvalidCombatId: 6,
     TryGetTokenInvalidId: 7,
-    TryGetTokenInvalidCombatantId: 8
+    TryGetTokenInvalidCombatantId: 8,
+    ConfigNoPermission: 9
 };
 
 export class NotificationUtils
@@ -46,6 +56,9 @@ export class NotificationUtils
             break;
         case ReasonType.TryGetTokenInvalidCombatantId:
             this.warning(locSystem(`TryGetTokenInvalidCombatantId`));
+            break;
+        case ReasonType.ConfigNoPermission:
+            this.warning(locSystem(`ConfigNoPermission`));
             break;
         }
     }
@@ -192,6 +205,15 @@ export function locWindow(localizationKey)
 export function locSystem(localizationKey)
 {
     return localize(`SystemMessage.${localizationKey}`);
+}
+
+/**
+ *
+ * @param localizationKey
+ */
+export function locSettings(localizationKey)
+{
+    return localize(`Settings.${localizationKey}`);
 }
 
 /**

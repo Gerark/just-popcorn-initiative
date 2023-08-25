@@ -1,32 +1,41 @@
 {
-  "id" : "just-popcorn-initiative",
-  "title" : "Just - Popcorn Initiative",
-  "description" : "Test",
-  "version" : "0.0.0",
-  "authors" : [
+  "id": "just-popcorn-initiative",
+  "title": "Just - Popcorn Initiative",
+  "description": "An alternative approach to combat sequencing. Rather than relying on standard initiative, it allows players to designate the subsequent combatant at the conclusion of their turn.",
+  "version": "1.0.0",
+  "authors": [
     {
-      "name" : "Gerry"
+      "name": "Gerry"
     }
   ],
-  "compatibility" : {
-    "minimum" : "10",
-    "verified" : "11"
+  "relationships": {
+    "requires": [
+      {
+        "id": "socketlib",
+        "type": "module"
+      }
+    ]
   },
-  "esmodules" : [
+  "compatibility": {
+    "minimum": "10",
+    "verified": "11"
+  },
+  "esmodules": [
     "index.js"
   ],
-  "styles" : [
+  "styles": [
     "style.css"
   ],
-  "languages" : [
+  "languages": [
     {
-      "lang" : "en",
-      "name" : "English",
-      "path" : "lang/en.json"
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
     }
   ],
-  "socket" : true,
-  "protected" : false,
-  "coreTranslation" : false,
-  "library" : false
+  "socket": true,
+  "protected": false,
+  "coreTranslation": false,
+  "library": false,
+  "url": "https://github.com/Gerark/just-popcorn-initiative"
 }

@@ -1,12 +1,15 @@
 import { get as svelteGet, get as storeGet } from "svelte/store";
 import {
+    canLastActorSelectThemselves,
+    canSelectWhenRoundIsOver,
+    overrideEndTurnButton,
     currentTokenPickerTarget,
     isTokenPickerRunning,
     previousCombatants,
     selectableCombatants,
     selectedCombatantId
 } from "./ModuleStore.js";
-import { locWindow, ModuleUtils } from "./ModuleUtils.js";
+import { locSettings, ModuleUtils, Constants } from "./ModuleUtils.js";
 import { ModuleAPI } from "./ModuleAPI.js";
 import { CanvasInteraction } from "./CanvasInteraction.js";
 
@@ -23,6 +26,27 @@ export class StoreUpdater
                 resolve();
             }, 100);
         });
+    }
+
+    static updateSettings([overrideEndTurnButtonVal, canLastActorSelectThemselvesVal, canSelectWhenRoundIsOverVal])
+    {
+        const settings = [];
+        settings.push({
+            name: locSettings(`${Constants.Options.OverrideNextTurnButton}-title`),
+            description: locSettings(`${Constants.Options.OverrideNextTurnButton}-description`),
+            value: overrideEndTurnButton
+        });
+        settings.push({
+            name: locSettings(`${Constants.Options.CanLastActorSelectThemselves}-title`),
+            description: locSettings(`${Constants.Options.CanLastActorSelectThemselves}-description`),
+            value: canLastActorSelectThemselves
+        });
+        settings.push({
+            name: locSettings(`${Constants.Options.CanSelectWhenRoundIsOver}-title`),
+            description: locSettings(`${Constants.Options.CanSelectWhenRoundIsOver}-description`),
+            value: canSelectWhenRoundIsOver
+        });
+        return settings;
     }
 
     static highlightCombatantItem(token, isHover)
@@ -70,6 +94,18 @@ export class StoreUpdater
                 tooltip: "tools.zoom-combatant.tooltip"
             });
         }
+
+        if (game.user.isGM)
+        {
+            actions.push({
+                icon: "fa-solid fa-gear",
+                command: () =>
+                {
+                    ModuleAPI.instance.showConfig();
+                },
+                tooltip: "tools.configuration.tooltip"
+            });
+        }
         return actions;
     }
 
@@ -103,10 +139,18 @@ export class StoreUpdater
         let turn = combat.turn;
         if (turn != null)
         {
+            let lastIndex = combat.turns.length;
             // If we're on the last combatant we show all combatant starting from turn 0
-            turn = turn + 1 === combat.turns.length ? -1 : turn;
+            if (turn + 1 === combat.turns.length)
+            {
+                turn = -1;
+                if (!storeGet(canLastActorSelectThemselves))
+                {
+                    lastIndex -= 1;
+                }
+            }
 
-            for (let i = turn + 1; i < combat.turns.length; i++)
+            for (let i = turn + 1; i < lastIndex; i++)
             {
                 const combatant = combat.turns[i];
                 const isSelected = storeGet(selectedCombatantId) === combatant.id;
@@ -136,9 +180,23 @@ export class StoreUpdater
     {
         const list = [];
         const turn = combat.turn;
-        if (turn != null && turn + 1 !== combat.turns.length)
+        if (turn != null)
         {
-            for (let i = 0; i <= turn && i < combat.turns.length; i++)
+            let startIndex = 0;
+            const endIndex = combat.turns.length;
+            if (turn + 1 === combat.turns.length)
+            {
+                if (storeGet(canLastActorSelectThemselves))
+                {
+                    startIndex = endIndex;
+                }
+                else
+                {
+                    startIndex = turn;
+                }
+            }
+
+            for (let i = startIndex; i <= turn && i < endIndex; i++)
             {
                 const combatant = combat.turns[i];
                 list.push({

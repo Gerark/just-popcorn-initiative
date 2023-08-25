@@ -1,25 +1,39 @@
 {
-  "JPI" : {
-    "Window" : {
-      "previous-actors.title" : "Previous Actors",
-      "selectable-actors.title" : "Selectable Actors",
-      "tools.title" : "Tools",
-      "tools.select-from-token.tooltip" : "Select from Token",
-      "tools.zoom-combatant.tooltip" : "Zoom on Selected Combatant",
-      "combatant-picker.title" : "Select a Token inside the canvas <span>or</span> Press here to cancel",
-      "confirm.button" : "Confirm",
-      "close.button" : "Close"
+  "JPI": {
+    "Window": {
+      "previous-actors.title": "Previous Actors",
+      "selectable-actors.title": "Selectable Actors",
+      "tools.title": "Tools",
+      "tools.select-from-token.tooltip": "Select from Token",
+      "tools.zoom-combatant.tooltip": "Zoom on Selected Combatant",
+      "tools.configuration.tooltip": "Open the Configuration Window",
+      "combatant-picker.title": "Select a Token inside the canvas <span>or</span> Press here to cancel",
+      "confirm.button": "Confirm",
+      "close.button": "Close"
     },
-    "SystemMessage" : {
-      "EndTurnNoCombat" : "Can't end turn. No combat is currently active.",
-      "EndTurnNoCombatantPlaying" : "Can't end turn. No combatant is currently playing.",
-      "EndTurnActorIsNotValid" : "Can't end turn. The current actor in combat is not valid.",
-      "EndTurnNotYourTurn" : "Can't end turn. It's not your turn yet.",
-      "EndTurnInvalidSelectedCombatant" : "Can't end turn. The selected combatant can't be found.",
-      "EndTurnLastOrSecondLast" : "Can't pass turn to another combatant. The current combatant is the last on this round.",
-      "EndTurnInvalidCombatId" : "A request to end turn can't be performed. The combatId provided is not valid.",
-      "TryGetTokenInvalidId" : "Can't find the token. The provided combatant id can't be found.",
-      "TryGetTokenInvalidCombatantId" : "Can't find the token. The provided token id is invalid."
+    "SystemMessage": {
+      "EndTurnNoCombat": "Can't end turn. No combat is currently active.",
+      "EndTurnNoCombatantPlaying": "Can't end turn. No combatant is currently playing.",
+      "EndTurnActorIsNotValid": "Can't end turn. The current actor in combat is not valid.",
+      "EndTurnNotYourTurn": "Can't end turn. It's not your turn yet.",
+      "EndTurnInvalidSelectedCombatant": "Can't end turn. The selected combatant can't be found.",
+      "EndTurnLastOrSecondLast": "Can't pass turn to another combatant. The current combatant is the last on this round.",
+      "EndTurnInvalidCombatId": "A request to end turn can't be performed. The combatId provided is not valid.",
+      "TryGetTokenInvalidId": "Can't find the token. The provided combatant id can't be found.",
+      "TryGetTokenInvalidCombatantId": "Can't find the token. The provided token id is invalid.",
+      "ConfigNoPermission": "You have no permission to change initiative configuration."
+    },
+    "Settings": {
+      "window-title": "Configure Popcorn Initiative",
+      "close.button": "Close",
+      "configure.button": "Configure",
+      "configuration.title": "Configuration",
+      "override-next-turn-title": "Override \"Next Turn\" and \"End Turn\" button",
+      "override-next-turn-description": "Automatically show the Window to pick the next actor when pressing \"End\" or \"Next\" turn buttons from Combat Tracker. ( Reload Required )",
+      "select-when-round-is-over-title": "Let the Last actor choose",
+      "select-when-round-is-over-description": "Enable last actor to choose first combatant of next round.",
+      "select-themselves-when-round-is-over-title": "Allow Self-Selection at the start of the next round",
+      "select-themselves-when-round-is-over-description": "Activate the option for a player to independently select themselves as the subsequent participant for consecutive rounds. This provides the player with the ability to maintain their position in the ongoing sequence if they so desire."
     }
   }
 }

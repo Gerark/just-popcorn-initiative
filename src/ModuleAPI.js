@@ -1,6 +1,6 @@
 import SelectionWindowApplication from "./view/selection-window/SelectionWindowApplication.js";
 import { moduleSocket } from "./ModuleSocket.js";
-import { NotificationUtils, ModuleUtils, ReasonType } from "./ModuleUtils.js";
+import { NotificationUtils, ModuleUtils, ReasonType, Constants } from "./ModuleUtils.js";
 import { StoreUpdater } from "./StoreUpdater.js";
 import { get as svelteGet } from "svelte/store";
 import {
@@ -9,17 +9,20 @@ import {
     overrideEndTurnButton,
     selectedCombatantId
 } from "./ModuleStore.js";
+import { ModuleSettings } from "./ModuleSettings.js";
+import ConfigurationWindowApplication from "./view/configuration-window/ConfigurationWindowApplication.js";
 
 export class ModuleAPI
 {
     static get instance()
     {
-        return game.modules.get("just-popcorn-initiative").api;
+        return game.modules.get(Constants.ModuleName).api;
     }
 
     constructor()
     {
         this.selectionWindow = null;
+        this.configWindow = null;
         Hooks.on("createCombatant", (ev) => this._updateCombatantsData(ev));
         Hooks.on("deleteCombatant", (ev) => this._updateCombatantsData(ev));
         Hooks.on("updateCombat", (ev) => this._updateCombatantsData(ev));
@@ -36,6 +39,8 @@ export class ModuleAPI
         {
             StoreUpdater.onGlobalClick();
         });
+
+        ModuleSettings.initialize();
     }
 
     executePassTurnTo(combatantId)
@@ -84,6 +89,36 @@ export class ModuleAPI
             this.selectionWindow = new SelectionWindowApplication().render(true, { focus: true });
         }
         this._updateCombatantsData(currentCombat);
+    }
+
+    showConfig()
+    {
+        if (game.user.isGM)
+        {
+            if (this.configWindow)
+            {
+                this.configWindow.render();
+            }
+            else
+            {
+                this.configWindow = new ConfigurationWindowApplication().render(true, { focus: true });
+            }
+        }
+        else
+        {
+            NotificationUtils.notify(ReasonType.ConfigNoPermission);
+        }
+    }
+
+    closeConfig()
+    {
+        ModuleSettings.save().then(
+            () =>
+            {
+                this.configWindow?.close();
+                this.configWindow = null;
+            }
+        );
     }
 
     _updateCombatantsData(combat)

@@ -1,4 +1,5 @@
 import { ModuleAPI } from './ModuleAPI.js';
+import { ModuleSettings } from './ModuleSettings.js';
 import { initializeSocket } from "./ModuleSocket.js";
 
 Hooks.once("socketlib.ready", () =>
