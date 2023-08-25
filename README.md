@@ -1,18 +1,11 @@
 ## Just Popcorn Initiative:
 
 ### Features:
-- Override the End turn button for players.
 - Expose macro to open the selection window.
 - Configuration option should be reachable from the Selection window.
-
 - Play animation when showing the Selection Window - Slide In/Slide Out
 - Possibility to ask for initiative rolls everytime a round is over
-- When the player is the last one of the round he can select any of the players who start the round if the "Initiative Roll for each round" is disabled. 
-
 - Ability for the GM to bring back a combatant in the same round
-- Show the previous actors list by showing the latest combatant at the top of the list
-
-- Check if this module can work with other turn based systems.
 
 Module Configuration
 - Macro drag&drop
