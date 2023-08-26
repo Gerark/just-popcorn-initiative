@@ -76,12 +76,11 @@
   .option-select {
     flex: 0;
     color: $primary-color;
-    min-width: 100px;
+    min-width: 200px;
     text-align: right;
     appearance: none;
     border: none;
-    padding: 0;
-    width: 100%;
+    padding: 5px;
     font-family: inherit;
     font-size: inherit;
     cursor: inherit;
@@ -103,6 +102,7 @@
   .option-select option {
     color: $primary-color;
     background-color: $bg-color-primary;
+    text-align: right;
   }
 
   .option:hover > .option-label {

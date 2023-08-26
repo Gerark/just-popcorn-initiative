@@ -7,7 +7,7 @@ import {
     isTokenPickerRunning,
     previousCombatants,
     selectableCombatants,
-    selectedCombatantId, selectionWindowSize, settings
+    selectedCombatantId, selectionWindowSize, settings, selectionWindowPosition
 } from "./ModuleStore.js";
 import { locSettings, ModuleUtils, Constants } from "./ModuleUtils.js";
 import { ModuleAPI } from "./ModuleAPI.js";
@@ -53,6 +53,21 @@ export class StoreUpdater
             options: [
                 { value: Constants.WindowSize.Normal.id, label: locSettings(Constants.WindowSize.Normal.text) },
                 { value: Constants.WindowSize.Mini.id, label: locSettings(Constants.WindowSize.Mini.text) }
+            ]
+        });
+        newSettings.push({
+            name: locSettings(`${Constants.Options.SelectionWindowPosition}-title`),
+            description: locSettings(`${Constants.Options.SelectionWindowPosition}-description`),
+            value: selectionWindowPosition,
+            options: [
+                { value: "topLeft", label: locSettings(`${Constants.Options.SelectionWindowPosition}-topLeft`) },
+                { value: "topRight", label: locSettings(`${Constants.Options.SelectionWindowPosition}-topRight`) },
+                { value: "bottomLeft", label: locSettings(`${Constants.Options.SelectionWindowPosition}-bottomLeft`) },
+                {
+                    value: "bottomRight",
+                    label: locSettings(`${Constants.Options.SelectionWindowPosition}-bottomRight`)
+                },
+                { value: "center", label: locSettings(`${Constants.Options.SelectionWindowPosition}-center`) }
             ]
         });
         newSettings.push({ separator: true });

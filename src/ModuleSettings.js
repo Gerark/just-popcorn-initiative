@@ -5,7 +5,7 @@ import {
     overrideEndTurnButton,
     canLastActorSelectThemselves,
     previousActorsDrawerOpen,
-    selectionWindowSize
+    selectionWindowSize, selectionWindowPosition
 } from "./ModuleStore.js";
 import { ConfigurationWindowApplicationProxy } from "./view/configuration-window/ConfigurationWindowApplication.js";
 import { get as svelteGet } from "svelte/store";
@@ -62,6 +62,7 @@ export class ModuleSettings
         this._addSetting(Constants.Options.CanLastActorSelectThemselves, Boolean, false, false, canLastActorSelectThemselves);
         this._addSetting(Constants.Options.PreviousActorsDrawerOpen, Boolean, true, false, previousActorsDrawerOpen, false);
         this._addSetting(Constants.Options.SelectionWindowSize, String, Constants.WindowSize.Normal.id, false, selectionWindowSize);
+        this._addSetting(Constants.Options.SelectionWindowPosition, String, "center", false, selectionWindowPosition);
     }
 
     static _addSetting(id, type, defaultValue, requiresReload, storeValue, isGlobal = true)

@@ -1,4 +1,9 @@
-import { canSelectWhenRoundIsOver, selectionWindowSize } from "./ModuleStore.js";
+import {
+    canSelectWhenRoundIsOver,
+    selectionWindowPosition,
+    previousActorsDrawerOpen,
+    selectionWindowSize
+} from "./ModuleStore.js";
 import { get as svelteGet } from "svelte/store";
 
 export const Constants = {
@@ -11,7 +16,8 @@ export const Constants = {
         CanLastActorSelectThemselves: "select-themselves-when-round-is-over",
         PreviousActorsDrawerOpen: "previous-actor-drawer-open",
         InstallCommonMacros: "install-common-macros",
-        SelectionWindowSize: "selection-window-size"
+        SelectionWindowSize: "selection-window-size",
+        SelectionWindowPosition: "selection-window-position"
     },
     WindowSize: {
         Normal: { id: "normal", text: "selection-window-size-normal", size: { w: 610, h: 340 } },
@@ -232,13 +238,57 @@ If you are the last or the second last combatant in the round the popcorn initia
     static getSizeForSelectionWindow()
     {
         const windowSize = svelteGet(selectionWindowSize);
+        let windowSizeInfo = Constants.WindowSize.Normal;
         switch (windowSize)
         {
         case Constants.WindowSize.Mini.id:
-            return Constants.WindowSize.Mini.size;
-        default:
-            return Constants.WindowSize.Normal.size;
+            windowSizeInfo = Constants.WindowSize.Mini.size;
         }
+
+        return {
+            w: windowSizeInfo.w - (svelteGet(previousActorsDrawerOpen) ? 0 : 100),
+            h: windowSizeInfo.h
+        };
+    }
+
+    static getPositionForSelectionWindow()
+    {
+        const { w, h } = this.getSizeForSelectionWindow();
+        const windowSize = svelteGet(selectionWindowPosition);
+        let x = 0;
+        let y = 0;
+        switch (windowSize)
+        {
+        case "topLeft":
+            x = 0;
+            y = 0;
+            break;
+        case "topRight":
+            x = window.innerWidth - w;
+            y = 0;
+            break;
+        case "bottomLeft":
+            x = 0;
+            y = window.innerHeight - h;
+            break;
+        case "bottomRight":
+            x = window.innerWidth - w;
+            y = window.innerHeight - h;
+            break;
+        case "center":
+            x = window.innerWidth / 2 - w / 2;
+            y = window.innerHeight / 2 - h / 2;
+            break;
+        }
+
+        return { x, y };
+    }
+
+    static getSizeAndPositionForSelectionWindow()
+    {
+        const { w, h } = this.getSizeForSelectionWindow();
+        const { x, y } = this.getPositionForSelectionWindow();
+        return { w, h, x, y };
     }
 }
 
