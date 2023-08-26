@@ -36,7 +36,7 @@
             {/each}
         </div>
         <div class="drag-target modalButtonContainer">
-            <SimpleButton icon="xmark" text="{locSettings(`close.button`)}" isCancelButton="true"
+            <SimpleButton icon="check" text="{locSettings(`close.button`)}"
                           on:click={close}></SimpleButton>
         </div>
     </div>

@@ -238,7 +238,7 @@ If you are the last or the second last combatant in the round the popcorn initia
     static getSizeForSelectionWindow()
     {
         const windowSize = svelteGet(selectionWindowSize);
-        let windowSizeInfo = Constants.WindowSize.Normal;
+        let windowSizeInfo = Constants.WindowSize.Normal.size;
         switch (windowSize)
         {
         case Constants.WindowSize.Mini.id:

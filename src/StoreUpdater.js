@@ -112,6 +112,7 @@ export class StoreUpdater
     {
         const actions = [];
         actions.push({
+            id: 1,
             icon: "fa-solid fa-eye-dropper",
             command: () =>
             {
@@ -123,6 +124,7 @@ export class StoreUpdater
         if (combatantId !== "-1")
         {
             actions.push({
+                id: 2,
                 icon: "fa-solid fa-bullseye",
                 command: () =>
                 {
@@ -135,6 +137,7 @@ export class StoreUpdater
         if (game.user.isGM)
         {
             actions.push({
+                id: 3,
                 icon: "fa-solid fa-gear",
                 command: () =>
                 {

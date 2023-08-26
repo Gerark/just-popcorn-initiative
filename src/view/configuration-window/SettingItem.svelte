@@ -11,7 +11,7 @@
 
     function onClick()
     {
-        if (storeValue)
+        if (storeValue && !options)
         {
             $storeValue = !$storeValue;
         }
@@ -20,13 +20,12 @@
             command();
         }
     }
-
-    console.log(options);
 </script>
 
 
 <div class="option" class:button={command}
-     use:tooltip={{content: `${description}`, placement: 'right', theme: 'just', arrow: roundArrow}}>
+     use:tooltip={{content: `${description}`, placement: 'right', theme: 'just', arrow: roundArrow}}
+     on:click={onClick}>
     {#if options && options.length > 0}
         <span class="option-label">{name}</span>
         <select class="option-select" bind:value={$storeValue}>

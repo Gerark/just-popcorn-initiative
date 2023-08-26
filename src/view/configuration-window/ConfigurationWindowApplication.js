@@ -33,7 +33,7 @@ export default class ConfigurationWindowApplication extends SvelteApplication
             resizable: true,
             title: locSettings("window-title"),
             width: 500,
-            height: 280,
+            height: 300,
 
             svelte: {
                 class: ConfigurationWindow,
