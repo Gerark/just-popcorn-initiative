@@ -34,7 +34,7 @@
       "select-when-round-is-over-description": "Enable last actor to choose first combatant of next round.",
       "select-themselves-when-round-is-over-title": "Allow Self-Selection at the start of the next round",
       "select-themselves-when-round-is-over-description": "Activate the option for a player to independently select themselves as the subsequent participant for consecutive rounds. This provides the player with the ability to maintain their position in the ongoing sequence if they so desire.",
-      "selection-window-size-title": "Selection Window size asd asd asd ",
+      "selection-window-size-title": "Selection Window size",
       "selection-window-size-description": "Select the size of the windows from these two presets. ( Normal, Mini )",
       "selection-window-size-mini": "Mini",
       "selection-window-size-normal": "Normal",
