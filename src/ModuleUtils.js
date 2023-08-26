@@ -20,8 +20,8 @@ export const Constants = {
         SelectionWindowPosition: "selection-window-position"
     },
     WindowSize: {
-        Normal: { id: "normal", text: "selection-window-size-normal", size: { w: 610, h: 340 } },
-        Mini: { id: "mini", text: "selection-window-size-mini", size: { w: 610, h: 240 } }
+        Normal: { id: "normal", text: "selection-window-size-normal", size: { w: 615, h: 340 } },
+        Mini: { id: "mini", text: "selection-window-size-mini", size: { w: 615, h: 240 } }
     }
 };
 
