@@ -5,7 +5,7 @@
 ![Foundry Verified Version](https://img.shields.io/badge/dynamic/json.svg?url=https%3A%2F%2Fgithub.com%2Fgerark%2Fjust-popcorn-initiative%2Freleases%2Flatest%2Fdownload%2Fmodule.json&label=Foundry%20Verified%20Version&query=$.compatibility.verified&colorB=orange&style=for-the-badge)
 ![Latest Version](https://img.shields.io/badge/dynamic/json.svg?url=https%3A%2F%2Fgithub.com%2Fgerark%2Fjust-popcorn-initiative%2Freleases%2Flatest%2Fdownload%2Fmodule.json&label=Latest%20Release&prefix=v&query=$.version&colorB=red&style=for-the-badge)
 
-![Animation showing the Sequencer](docs/videos/base.mp4)
+![Animation showing the Sequencer](docs/videos/base.gif)
 
 An alternative approach to combat sequencing. Rather than relying on standard initiative, it allows players and GMs to
 designate
