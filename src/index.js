@@ -11,4 +11,5 @@ Hooks.once('ready', () =>
 {
     const module = game.modules.get("just-popcorn-initiative");
     module.api = new ModuleAPI();
+    ModuleSettings.initialize();
 });

@@ -1,10 +1,11 @@
-import { locSettings } from "./ModuleUtils.js";
-import { Constants } from "./ModuleUtils.js";
+import { locSettings, Constants } from "./ModuleUtils.js";
+import { StoreUpdater } from "./StoreUpdater.js";
 import {
     canSelectWhenRoundIsOver,
     overrideEndTurnButton,
     canLastActorSelectThemselves,
-    previousActorsDrawerOpen
+    previousActorsDrawerOpen,
+    selectionWindowSize
 } from "./ModuleStore.js";
 import { ConfigurationWindowApplicationProxy } from "./view/configuration-window/ConfigurationWindowApplication.js";
 import { get as svelteGet } from "svelte/store";
@@ -15,6 +16,7 @@ export class ModuleSettings
     {
         this._settings = [];
         this._registerSettings();
+        StoreUpdater.updateSettings();
     }
 
     static async save()
@@ -32,7 +34,10 @@ export class ModuleSettings
 
     static async saveSetting(storeValue)
     {
-        const setting = this._settings.find((x) => { return x.storeValue === storeValue; });
+        const setting = this._settings.find((x) =>
+        {
+            return x.storeValue === storeValue;
+        });
         if (setting != null)
         {
             const reloadRequired = this._setSettingValue(setting.id, svelteGet(setting.storeValue));
@@ -55,7 +60,8 @@ export class ModuleSettings
         this._addSetting(Constants.Options.OverrideNextTurnButton, Boolean, true, true, overrideEndTurnButton);
         this._addSetting(Constants.Options.CanSelectWhenRoundIsOver, Boolean, true, false, canSelectWhenRoundIsOver);
         this._addSetting(Constants.Options.CanLastActorSelectThemselves, Boolean, false, false, canLastActorSelectThemselves);
-        this._addSetting(Constants.Options.PreviousActorsDrawerOpen, Boolean, true, false, previousActorsDrawerOpen);
+        this._addSetting(Constants.Options.PreviousActorsDrawerOpen, Boolean, true, false, previousActorsDrawerOpen, false);
+        this._addSetting(Constants.Options.SelectionWindowSize, String, Constants.WindowSize.Normal.id, false, selectionWindowSize);
     }
 
     static _addSetting(id, type, defaultValue, requiresReload, storeValue, isGlobal = true)

@@ -1,4 +1,4 @@
-import { canSelectWhenRoundIsOver } from "./ModuleStore.js";
+import { canSelectWhenRoundIsOver, selectionWindowSize } from "./ModuleStore.js";
 import { get as svelteGet } from "svelte/store";
 
 export const Constants = {
@@ -10,7 +10,12 @@ export const Constants = {
         CanSelectWhenRoundIsOver: "select-when-round-is-over",
         CanLastActorSelectThemselves: "select-themselves-when-round-is-over",
         PreviousActorsDrawerOpen: "previous-actor-drawer-open",
-        InstallCommonMacros: "install-common-macros"
+        InstallCommonMacros: "install-common-macros",
+        SelectionWindowSize: "selection-window-size"
+    },
+    WindowSize: {
+        Normal: { id: "normal", text: "selection-window-size-normal", size: { w: 610, h: 340 } },
+        Mini: { id: "mini", text: "selection-window-size-mini", size: { w: 610, h: 240 } }
     }
 };
 
@@ -222,6 +227,18 @@ If you are the last or the second last combatant in the round the popcorn initia
     static isMacroInstalled(name)
     {
         return game.macros.contents.find((m) => m.name === `${Constants.ModuleTextNameAcronym} - ${name}`);
+    }
+
+    static getSizeForSelectionWindow()
+    {
+        const windowSize = svelteGet(selectionWindowSize);
+        switch (windowSize)
+        {
+        case Constants.WindowSize.Mini.id:
+            return Constants.WindowSize.Mini.size;
+        default:
+            return Constants.WindowSize.Normal.size;
+        }
     }
 }
 

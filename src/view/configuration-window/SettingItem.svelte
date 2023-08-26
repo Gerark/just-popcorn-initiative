@@ -1,12 +1,13 @@
 <script>
     import { roundArrow } from "tippy.js";
     import { tooltip } from "../tippy-action/tooltip.js";
-    import SimpleButton from "../SimpleButton.svelte";
+    import Select from "svelte-select";
 
     export let name;
     export let description;
     export let storeValue;
     export let command;
+    export let options;
 
     function onClick()
     {
@@ -19,17 +20,25 @@
             command();
         }
     }
+
+    console.log(options);
 </script>
 
 
 <div class="option" class:button={command}
-     use:tooltip={{content: `${description}`, placement: 'right', theme: 'just', arrow: roundArrow}}
-     on:click={() => { onClick(); }}>
-    {#if storeValue}
+     use:tooltip={{content: `${description}`, placement: 'right', theme: 'just', arrow: roundArrow}}>
+    {#if options && options.length > 0}
         <span class="option-label">{name}</span>
-        <input class="option-value" type="checkbox" bind:checked={$storeValue}/>
+        <select class="option-select" bind:value={$storeValue}>
+            {#each options as option (option.value) }
+                <option value={option.value}>{option.label}</option>
+            {/each}
+        </select>
     {:else if command}
         <span class="option-label">{name}</span>
+    {:else if storeValue}
+        <span class="option-label">{name}</span>
+        <input class="option-value" type="checkbox" bind:checked={$storeValue}/>
     {/if}
 </div>
 
@@ -45,6 +54,7 @@
     padding: 5px;
     cursor: default;
     min-height: 30px;
+    max-height: 30px;
   }
 
   .option.button {
@@ -61,6 +71,38 @@
 
   .option-value {
     flex: 0;
+  }
+
+  .option-select {
+    flex: 0;
+    color: $primary-color;
+    min-width: 100px;
+    text-align: right;
+    appearance: none;
+    border: none;
+    padding: 0;
+    width: 100%;
+    font-family: inherit;
+    font-size: inherit;
+    cursor: inherit;
+    line-height: inherit;
+  }
+
+  .option-select:hover {
+    box-shadow: none;
+  }
+
+  .option-select:active {
+    box-shadow: none;
+  }
+
+  .option-select:focus {
+    box-shadow: none;
+  }
+
+  .option-select option {
+    color: $primary-color;
+    background-color: $bg-color-primary;
   }
 
   .option:hover > .option-label {

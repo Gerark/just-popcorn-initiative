@@ -7,7 +7,7 @@ import {
     isTokenPickerRunning,
     previousCombatants,
     selectableCombatants,
-    selectedCombatantId
+    selectedCombatantId, selectionWindowSize, settings
 } from "./ModuleStore.js";
 import { locSettings, ModuleUtils, Constants } from "./ModuleUtils.js";
 import { ModuleAPI } from "./ModuleAPI.js";
@@ -28,29 +28,38 @@ export class StoreUpdater
         });
     }
 
-    static updateSettings([overrideEndTurnButtonVal, canLastActorSelectThemselvesVal, canSelectWhenRoundIsOverVal])
+    static updateSettings()
     {
-        const settings = [];
-        settings.push({
+        const newSettings = [];
+        newSettings.push({
             name: locSettings(`${Constants.Options.OverrideNextTurnButton}-title`),
             description: locSettings(`${Constants.Options.OverrideNextTurnButton}-description`),
             value: overrideEndTurnButton
         });
-        settings.push({
+        newSettings.push({
             name: locSettings(`${Constants.Options.CanLastActorSelectThemselves}-title`),
             description: locSettings(`${Constants.Options.CanLastActorSelectThemselves}-description`),
             value: canLastActorSelectThemselves
         });
-        settings.push({
+        newSettings.push({
             name: locSettings(`${Constants.Options.CanSelectWhenRoundIsOver}-title`),
             description: locSettings(`${Constants.Options.CanSelectWhenRoundIsOver}-description`),
             value: canSelectWhenRoundIsOver
         });
-        settings.push({ separator: true });
+        newSettings.push({
+            name: locSettings(`${Constants.Options.SelectionWindowSize}-title`),
+            description: locSettings(`${Constants.Options.SelectionWindowSize}-description`),
+            value: selectionWindowSize,
+            options: [
+                { value: Constants.WindowSize.Normal.id, label: locSettings(Constants.WindowSize.Normal.text) },
+                { value: Constants.WindowSize.Mini.id, label: locSettings(Constants.WindowSize.Mini.text) }
+            ]
+        });
+        newSettings.push({ separator: true });
 
         if (!ModuleAPI.instance.areCommonMacrosInstalled())
         {
-            settings.push({
+            newSettings.push({
                 name: locSettings(`${Constants.Options.InstallCommonMacros}-title`),
                 description: locSettings(`${Constants.Options.InstallCommonMacros}-description`),
                 command: () =>
@@ -59,7 +68,7 @@ export class StoreUpdater
                 }
             });
         }
-        return settings;
+        settings.set(newSettings);
     }
 
     static highlightCombatantItem(token, isHover)

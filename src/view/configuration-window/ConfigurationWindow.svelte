@@ -30,7 +30,8 @@
                     <div class="setting-separator"></div>
                 {:else}
                     <SettingItem name="{setting.name}" description="{setting.description}"
-                                 storeValue="{setting.value}" command="{setting.command}"></SettingItem>
+                                 storeValue="{setting.value}" command="{setting.command}"
+                                 options="{setting.options}"></SettingItem>
                 {/if}
             {/each}
         </div>

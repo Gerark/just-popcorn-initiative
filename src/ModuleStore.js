@@ -7,12 +7,12 @@ export const previousCombatants = writable([]);
 export const isSelectionWindowHovered = writable(false);
 export const isTokenPickerRunning = writable(false);
 export const previousActorsDrawerOpen = writable(true);
+export const selectionWindowSize = writable("mini");
 export const selectedCombatantId = _createSelectedCombatantId();
 export const canSelectWhenRoundIsOver = writable(true);
 export const canLastActorSelectThemselves = writable(false);
 export const overrideEndTurnButton = writable(true);
-export const settings = derived([overrideEndTurnButton, canLastActorSelectThemselves,
-    canSelectWhenRoundIsOver], StoreUpdater.updateSettings);
+export const settings = writable([]);
 
 export const isAnyCombatantSelected = derived(selectableCombatants, ($selectableCombatants) =>
 {

@@ -39,8 +39,6 @@ export class ModuleAPI
         {
             StoreUpdater.onGlobalClick();
         });
-
-        ModuleSettings.initialize();
     }
 
     executePassTurnTo(combatantId)
