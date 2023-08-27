@@ -19,6 +19,10 @@ group enjoys playing a crunchy system, but we're also open to incorporating narr
 Unfortunately, Foundry VTT doesn't offer a built-in way for this (at least not for D&D 5e). So, I went ahead and created
 this module to fill in the missing functionality.
 
+### Credits
+
+This package is built w/ the [TyphonJS Runtime Library](https://github.com/typhonjs-fvtt-lib/typhonjs)
+
 ### How it works?
 
 Once you've got the module enabled, the "End Turn" and "Next Turn" buttons on the combat tracker will behave
