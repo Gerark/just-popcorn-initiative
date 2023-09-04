@@ -151,7 +151,7 @@ export class ModuleUtils
             if (key !== "default")
             {
                 const player = game.users.get(key);
-                if (ownershipLevel === 3 && !player.isGM)
+                if (ownershipLevel === 3 && player && !player.isGM)
                 {
                     owners.push({ color: player.color });
                 }
