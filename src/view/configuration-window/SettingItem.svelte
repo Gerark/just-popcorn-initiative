@@ -1,7 +1,6 @@
 <script>
     import { roundArrow } from "tippy.js";
     import { tooltip } from "../tippy-action/tooltip.js";
-    import Select from "svelte-select";
 
     export let name;
     export let description;

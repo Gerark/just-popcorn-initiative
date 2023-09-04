@@ -15,7 +15,6 @@
     "@typhonjs-fvtt/runtime": "^0.1.0",
     "@typhonjs-fvtt/svelte-standard": "^0.1.0",
     "svelte": "^4.0.0",
-    "svelte-select": "^5.7.0",
     "tippy.js": "^6.3.7"
   },
   "devDependencies": {
