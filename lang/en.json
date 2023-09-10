@@ -7,6 +7,8 @@
       "tools.select-from-token.tooltip": "Select from Token",
       "tools.zoom-combatant.tooltip": "Zoom on Selected Combatant",
       "tools.configuration.tooltip": "Open the Configuration Window",
+      "tools.change-avatar-size.tooltip": "Change actor size",
+      "tools.toggleStats.tooltip": "Toggle stats visibility",
       "combatant-picker.title": "Select a Token inside the canvas <span>or</span> Press here to cancel",
       "confirm.button": "Confirm",
       "close.button": "Close"

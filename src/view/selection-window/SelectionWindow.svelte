@@ -10,6 +10,7 @@
       isAnyCombatantSelected,
       selectedCombatantId,
       toolboxActions,
+       showActorStats,
       isSelectionWindowHovered, isTokenPickerRunning, previousActorsDrawerOpen
    } from "../../ModuleStore.js";
    import CombatantList from "./CombatantList.svelte";
@@ -91,7 +92,8 @@
                         on:itemClick={(e) => $selectedCombatantId = e.detail.id}
                         on:itemDoubleClick={(e) => { $selectedCombatantId = e.detail.id; _panToToken($selectedCombatantId) }}
                         on:itemMouseEnter={(e) => { _highlightToken(e, e.detail.id, true); }}
-                        on:itemMouseExit={(e) => { _highlightToken(e, e.detail.id, false); }}>
+                        on:itemMouseExit={(e) => { _highlightToken(e, e.detail.id, false); }}
+                        showStats="{$showActorStats}">
          </CombatantGrid>
          <CombatantSelectionToolbox actions="{$toolboxActions}"
                                     on:actionRequested={_onActionRequested}></CombatantSelectionToolbox>

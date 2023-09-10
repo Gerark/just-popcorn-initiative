@@ -1,9 +1,12 @@
 <script>
-   import SelectableActor from "./SelectableActor.svelte";
    import { createEventDispatcher } from "svelte";
    import { locWindow } from "../../ModuleUtils.js";
+   import AltSelectableActor from "./AltSelectableActor.svelte";
+   import { avatarSize } from "../../ModuleStore.js";
+   import { Constants } from "../../ModuleUtils.js";
 
    export let combatants;
+   export let showStats;
 
    const dispatch = createEventDispatcher();
 
@@ -33,12 +36,15 @@
    <span class="drag-target title">{locWindow(`selectable-actors.title`)}</span>
    <div class="drag-target grid">
       {#each combatants as combatant (combatant.id)}
-         <SelectableActor
+         <AltSelectableActor
           isSelected="{combatant.isSelected}"
           isHighlighted="{combatant.isHighlighted}"
           name="{combatant.name}"
           icon="{combatant.icon}"
           owners="{combatant.owners}"
+          stats="{combatant.stats}"
+          actorSize="{Constants.AvatarSizes[$avatarSize].Value}"
+          {showStats}
           on:click={(ev) => _onItemClick(combatant)}
           on:dblclick={(ev) => _onItemDoubleClick(combatant)}
           on:mouseenter={(ev) => _onItemMouseEnter(combatant)}

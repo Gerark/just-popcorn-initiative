@@ -6,6 +6,9 @@
     import { locSettings } from "../../ModuleUtils.js";
     import SettingItem from "./SettingItem.svelte";
     import SimpleButton from "../SimpleButton.svelte";
+    import EditableList from "@gerark/just-svelte-lib/components/EditableList/EditableList.svelte";
+    import TreeViewMenu from "@gerark/just-svelte-lib/components/UTreeView/TreeViewMenu.svelte";
+    import { writable } from "svelte/store";
 
     export let elementRoot;
 
@@ -16,6 +19,11 @@
     {
         moduleAPI.closeConfig();
     }
+
+    let itemsStore = writable([
+        { id: 1, label: "HELLO" }
+    ]);
+    let myItems = [1, 2, 3, 4];
 </script>
 
 <svelte:options accessors={true}/>
@@ -24,6 +32,10 @@
     <div class="drag-target mainContent" use:draggable={{ position, hasTargetClassList: ['drag-target'] }}
          role=application>
         <span class="drag-target title">{locSettings("configuration.title")}</span>
+        <TreeViewMenu itemsStore="{itemsStore}" theme="u"></TreeViewMenu>
+        <EditableList title="TITOLO BELLO" items="{myItems}" let:item>
+            <span>{item}</span>
+        </EditableList>
         <div class="drag-target setting-list">
             {#each $settings as setting}
                 {#if setting.separator}

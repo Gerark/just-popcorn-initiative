@@ -1,7 +1,7 @@
 import {
     canSelectWhenRoundIsOver,
-    selectionWindowPosition,
     previousActorsDrawerOpen,
+    selectionWindowPosition,
     selectionWindowSize
 } from "./ModuleStore.js";
 import { get as svelteGet } from "svelte/store";
@@ -15,6 +15,7 @@ export const Constants = {
         CanSelectWhenRoundIsOver: "select-when-round-is-over",
         CanLastActorSelectThemselves: "select-themselves-when-round-is-over",
         PreviousActorsDrawerOpen: "previous-actor-drawer-open",
+        AvatarSize: "avatar-size",
         InstallCommonMacros: "install-common-macros",
         SelectionWindowSize: "selection-window-size",
         SelectionWindowPosition: "selection-window-position"
@@ -22,7 +23,14 @@ export const Constants = {
     WindowSize: {
         Normal: { id: "normal", text: "selection-window-size-normal", size: { w: 615, h: 340 } },
         Mini: { id: "mini", text: "selection-window-size-mini", size: { w: 615, h: 240 } }
-    }
+    },
+    AvatarSizes: [
+        { Value: -2, Icon: "maximize fa-2xs" },
+        { Value: -1, Icon: "maximize fa-xs" },
+        { Value: 0, Icon: "maximize fa-sm" },
+        { Value: 1, Icon: "maximize fa-md" },
+        { Value: 2, Icon: "maximize fa-xl" }
+    ]
 };
 
 export const ReasonType = {
@@ -233,6 +241,27 @@ If you are the last or the second last combatant in the round the popcorn initia
     static isMacroInstalled(name)
     {
         return game.macros.contents.find((m) => m.name === `${Constants.ModuleTextNameAcronym} - ${name}`);
+    }
+
+    static getPropertyByPath(obj, path)
+    {
+        const segments = path.split('.');
+        for (let i = 0; i < segments.length; i++)
+        {
+            obj = obj[segments[i]];
+        }
+
+        return obj;
+    }
+
+    static resolvePropertyText(actor, inputText)
+    {
+        const regex = /\{([^}]+)}/g;
+
+        return inputText.replace(regex, (match, capturedText) =>
+        {
+            return ModuleUtils.getPropertyByPath(actor, capturedText);
+        });
     }
 
     static getSizeForSelectionWindow()

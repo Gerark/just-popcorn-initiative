@@ -2,16 +2,18 @@ import { get as svelteGet, get as storeGet } from "svelte/store";
 import {
     canLastActorSelectThemselves,
     canSelectWhenRoundIsOver,
-    overrideEndTurnButton,
     currentTokenPickerTarget,
     isTokenPickerRunning,
+    overrideEndTurnButton,
     previousCombatants,
     selectableCombatants,
-    selectedCombatantId, selectionWindowSize, settings, selectionWindowPosition
+    selectedCombatantId,
+    selectionWindowPosition,
+    selectionWindowSize,
+    settings, statLabels
 } from "./ModuleStore.js";
-import { locSettings, ModuleUtils, Constants } from "./ModuleUtils.js";
+import { Constants, locSettings, ModuleUtils } from "./ModuleUtils.js";
 import { ModuleAPI } from "./ModuleAPI.js";
-import { CanvasInteraction } from "./CanvasInteraction.js";
 
 export class StoreUpdater
 {
@@ -108,47 +110,6 @@ export class StoreUpdater
         });
     }
 
-    static getToolboxActions(combatantId)
-    {
-        const actions = [];
-        actions.push({
-            id: 1,
-            icon: "fa-solid fa-eye-dropper",
-            command: () =>
-            {
-                isTokenPickerRunning.set(true);
-            },
-            tooltip: "tools.select-from-token.tooltip"
-        });
-
-        if (combatantId !== "-1")
-        {
-            actions.push({
-                id: 2,
-                icon: "fa-solid fa-bullseye",
-                command: () =>
-                {
-                    CanvasInteraction.panToCombatantToken(combatantId);
-                },
-                tooltip: "tools.zoom-combatant.tooltip"
-            });
-        }
-
-        if (game.user.isGM)
-        {
-            actions.push({
-                id: 3,
-                icon: "fa-solid fa-gear",
-                command: () =>
-                {
-                    ModuleAPI.instance.showConfig();
-                },
-                tooltip: "tools.configuration.tooltip"
-            });
-        }
-        return actions;
-    }
-
     static onGlobalClick()
     {
         if (svelteGet(isTokenPickerRunning))
@@ -193,6 +154,19 @@ export class StoreUpdater
             for (let i = turn + 1; i < lastIndex; i++)
             {
                 const combatant = combat.turns[i];
+                const actorStats = [];
+                const actor = game.actors.get(combatant.actorId);
+                if (actor)
+                {
+                    // const inputText = `<span class="fa fa-heart" style="color: #FF0000;"></span>Speed {system.attributes.hp.value}/{system.attributes.hp.max}`;
+                    const labels = svelteGet(statLabels);
+                    labels.forEach((x) =>
+                    {
+                        const resolvedText = ModuleUtils.resolvePropertyText(actor, x);
+                        actorStats.push(resolvedText);
+                    });
+                }
+
                 const isSelected = storeGet(selectedCombatantId) === combatant.id;
                 list.push({
                     icon: combatant.img,
@@ -202,7 +176,8 @@ export class StoreUpdater
                     tokenId: combatant.tokenId,
                     actorId: combatant.actorId,
                     isHighlighted: false,
-                    owners: ModuleUtils.retrieveOwnersInfo(combatant.actorId)
+                    owners: ModuleUtils.retrieveOwnersInfo(combatant.actorId),
+                    stats: actorStats
                 });
             }
             list.sort((a, b) =>

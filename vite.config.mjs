@@ -108,7 +108,17 @@ export default () =>
                scss: {
                   prependData: `@import './src/global-styles.scss';`
                }
-            })
+            }),
+            onwarn: (warning, handler) =>
+            {
+               const { code, frame } = warning;
+               if (code === "css-unused-selector")
+               {
+                  return;
+               }
+
+               handler(warning);
+            }
          }),
          replace({
             'process.env.NODE_ENV': JSON.stringify('production'),

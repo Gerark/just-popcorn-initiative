@@ -12,8 +12,10 @@
     "#standard/*": "@typhonjs-fvtt/svelte-standard/*"
   },
   "dependencies": {
+    "@gerark/just-svelte-lib": "^0.0.1",
     "@typhonjs-fvtt/runtime": "^0.1.0",
     "@typhonjs-fvtt/svelte-standard": "^0.1.0",
+    "fuzzysort": "^2.0.4",
     "svelte": "^4.0.0",
     "tippy.js": "^6.3.7"
   },

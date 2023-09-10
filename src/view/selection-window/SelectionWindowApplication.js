@@ -2,8 +2,6 @@ import { SvelteApplication } from '#runtime/svelte/application';
 
 import SelectionWindow from './SelectionWindow.svelte';
 import { ModuleUtils } from '../../ModuleUtils.js';
-import { previousActorsDrawerOpen } from '../../ModuleStore.js';
-import { get as svelteGet } from 'svelte/store';
 
 export default class SelectionWindowApplication extends SvelteApplication
 {
