@@ -10,7 +10,7 @@ import { get as svelteGet } from "svelte/store";
  *
  * @param avatarSizeVal
  */
-export default function getToolboxActions(combatantId, avatarSizeVal)
+export default function getToolboxActions(combatantId)
 {
     const actions = [];
     let id = 0;
@@ -24,7 +24,7 @@ export default function getToolboxActions(combatantId, avatarSizeVal)
 
     if (game.user.isGM)
     {
-        addAction(actions, buildConfigAction(avatarSizeVal), id);
+        addAction(actions, buildConfigAction(), id);
     }
     return actions;
 }

@@ -4,15 +4,12 @@ import {
     canSelectWhenRoundIsOver,
     overrideEndTurnButton,
     canLastActorSelectThemselves,
-    previousActorsDrawerOpen,
-    selectionWindowSize,
-    selectionWindowPosition,
-    avatarSize,
+    selectionWindowAnchor,
     layoutCorners,
-    windowSizes,
     statLabels,
     combatantImageTypes,
-    currentIconImageType
+    currentIconImageType,
+    selectionWindowState
 } from "./ModuleStore.js";
 import { ConfigurationWindowApplicationProxy } from "./view/configuration-window/ConfigurationWindowApplication.js";
 import { get as svelteGet } from "svelte/store";
@@ -25,23 +22,26 @@ export class ModuleSettings
         this._settings = [];
         this._registerSettings();
 
-        windowSizes.set([
-            { value: Constants.WindowSize.Normal.id, label: locSettings(Constants.WindowSize.Normal.text) },
-            { value: Constants.WindowSize.Mini.id, label: locSettings(Constants.WindowSize.Mini.text) }
-        ]);
         combatantImageTypes.set([
-            { value: Constants.CombatantImageType.token.id, label: locSettings(Constants.CombatantImageType.token.text) },
-            { value: Constants.CombatantImageType.actor.id, label: locSettings(Constants.CombatantImageType.actor.text) }
+            {
+                value: Constants.CombatantImageType.token.id,
+                label: locSettings(Constants.CombatantImageType.token.text)
+            },
+            {
+                value: Constants.CombatantImageType.actor.id,
+                label: locSettings(Constants.CombatantImageType.actor.text)
+            }
         ]);
         layoutCorners.set([
-            { value: "topLeft", label: locSettings(`${Constants.Options.SelectionWindowPosition}-topLeft`) },
-            { value: "topRight", label: locSettings(`${Constants.Options.SelectionWindowPosition}-topRight`) },
-            { value: "bottomLeft", label: locSettings(`${Constants.Options.SelectionWindowPosition}-bottomLeft`) },
+            { value: "topLeft", label: locSettings(`${Constants.Options.SelectionWindowAnchor}-topLeft`) },
+            { value: "topRight", label: locSettings(`${Constants.Options.SelectionWindowAnchor}-topRight`) },
+            { value: "bottomLeft", label: locSettings(`${Constants.Options.SelectionWindowAnchor}-bottomLeft`) },
             {
                 value: "bottomRight",
-                label: locSettings(`${Constants.Options.SelectionWindowPosition}-bottomRight`)
+                label: locSettings(`${Constants.Options.SelectionWindowAnchor}-bottomRight`)
             },
-            { value: "center", label: locSettings(`${Constants.Options.SelectionWindowPosition}-center`) }
+            { value: "center", label: locSettings(`${Constants.Options.SelectionWindowAnchor}-center`) },
+            { value: "free", label: locSettings(`${Constants.Options.SelectionWindowAnchor}-free`) }
         ]);
         StoreUpdater.updateSettings();
     }
@@ -52,6 +52,20 @@ export class ModuleSettings
         this._settings.forEach((x) =>
         {
             reloadRequired |= this._setSettingValue(x.id, svelteGet(x.storeValue));
+        });
+        if (reloadRequired)
+        {
+            await SettingsConfig.reloadConfirm({ world: true });
+        }
+    }
+
+    static async resetToDefault()
+    {
+        let reloadRequired = false;
+        this._settings.forEach((x) =>
+        {
+            x.storeValue.set(x.defaultValue);
+            reloadRequired |= this._setSettingValue(x.id, x.defaultValue);
         });
         if (reloadRequired)
         {
@@ -87,18 +101,16 @@ export class ModuleSettings
         this._addSetting(Constants.Options.OverrideNextTurnButton, Boolean, true, true, overrideEndTurnButton);
         this._addSetting(Constants.Options.CanSelectWhenRoundIsOver, Boolean, true, false, canSelectWhenRoundIsOver);
         this._addSetting(Constants.Options.CanLastActorSelectThemselves, Boolean, false, false, canLastActorSelectThemselves);
-        this._addSetting(Constants.Options.PreviousActorsDrawerOpen, Boolean, true, false, previousActorsDrawerOpen, false);
-        this._addSetting(Constants.Options.AvatarSize, Number, 1, false, avatarSize, false);
-        this._addSetting(Constants.Options.SelectionWindowSize, String, Constants.WindowSize.Normal.id, false, selectionWindowSize);
-        this._addSetting(Constants.Options.SelectionWindowPosition, String, "center", false, selectionWindowPosition);
+        this._addSetting(Constants.Options.SelectionWindowAnchor, String, "free", false, selectionWindowAnchor);
         this._addSetting(Constants.Options.Theme, String, "dark-juice", false, currentTheme);
         this._addSetting(Constants.Options.CombatantImageType, String, Constants.CombatantImageType.token.id, false, currentIconImageType);
         this._addSetting(Constants.Options.Stats, Array, [], false, statLabels);
+        this._addSetting(Constants.Options.SelectionWindowState, Object, {}, false, selectionWindowState);
     }
 
     static _addSetting(id, type, defaultValue, requiresReload, storeValue, isGlobal = true)
     {
-        const setting = this._createSetting(id, requiresReload, storeValue);
+        const setting = this._createSetting(id, requiresReload, storeValue, defaultValue);
         this._settings.push(setting);
         game.settings.register(Constants.ModuleName, id, {
             name: locSettings(`${id}-title`),
@@ -121,9 +133,9 @@ export class ModuleSettings
         return game.settings.get(Constants.ModuleName, id);
     }
 
-    static _createSetting(id, requiresReload, storeValue)
+    static _createSetting(id, requiresReload, storeValue, defaultValue)
     {
-        return { id, requiresReload, storeValue };
+        return { id, requiresReload, storeValue, defaultValue };
     }
 
     static _setSettingValue(id, value)

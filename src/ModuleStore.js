@@ -6,13 +6,11 @@ export const selectableCombatants = writable([]);
 export const previousCombatants = writable([]);
 export const isSelectionWindowHovered = writable(false);
 export const isTokenPickerRunning = writable(false);
-export const previousActorsDrawerOpen = writable(true);
-export const avatarSize = writable(1);
 export const showActorStats = writable(false);
 export const statLabels = writable([]);
 export const currentIconImageType = writable("token");
-export const selectionWindowSize = writable("mini");
-export const selectionWindowPosition = writable("center");
+export const selectionWindowAnchor = writable("center");
+export const selectionWindowState = writable({});
 export const selectedCombatantId = _createSelectedCombatantId();
 export const canSelectWhenRoundIsOver = writable(true);
 export const canLastActorSelectThemselves = writable(false);
@@ -26,9 +24,9 @@ export const isAnyCombatantSelected = derived(selectableCombatants, ($selectable
         return x.isSelected;
     });
 });
-export const toolboxActions = derived([selectedCombatantId, avatarSize], ([$selectedCombatantId, $avatarSize]) =>
+export const toolboxActions = derived([selectedCombatantId], ([$selectedCombatantId]) =>
 {
-    return getToolboxActions($selectedCombatantId, $avatarSize);
+    return getToolboxActions($selectedCombatantId);
 });
 
 export const currentTokenPickerTarget = derived([selectableCombatants, isTokenPickerRunning],
@@ -56,7 +54,6 @@ export const currentTokenPickerTarget = derived([selectableCombatants, isTokenPi
     });
 
 export const layoutCorners = writable([]);
-export const windowSizes = writable([]);
 export const combatantImageTypes = writable([]);
 
 /**

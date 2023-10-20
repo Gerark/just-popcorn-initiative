@@ -1,8 +1,7 @@
 import {
     canSelectWhenRoundIsOver,
-    previousActorsDrawerOpen,
-    selectionWindowPosition,
-    selectionWindowSize
+    selectionWindowAnchor,
+    selectionWindowState
 } from "./ModuleStore.js";
 import { get as svelteGet } from "svelte/store";
 
@@ -15,25 +14,14 @@ export const Constants = {
         CanSelectWhenRoundIsOver: "select-when-round-is-over",
         CanLastActorSelectThemselves: "select-themselves-when-round-is-over",
         PreviousActorsDrawerOpen: "previous-actor-drawer-open",
-        AvatarSize: "avatar-size",
         InstallCommonMacros: "install-common-macros",
-        SelectionWindowSize: "selection-window-size",
-        SelectionWindowPosition: "selection-window-position",
+        ResetToDefault: "reset-to-default",
+        SelectionWindowAnchor: "selection-window-anchor",
         CombatantImageType: "selection-window-icon-type",
         Stats: "selection-window-stats",
+        SelectionWindowState: "selection-window-state",
         Theme: "selection-window-theme"
     },
-    WindowSize: {
-        Normal: { id: "normal", text: "selection-window-size-normal", size: { w: 615, h: 340 } },
-        Mini: { id: "mini", text: "selection-window-size-mini", size: { w: 615, h: 240 } }
-    },
-    AvatarSizes: [
-        { Value: -2, Icon: "maximize fa-2xs" },
-        { Value: -1, Icon: "maximize fa-xs" },
-        { Value: 0, Icon: "maximize fa-sm" },
-        { Value: 1, Icon: "maximize fa-md" },
-        { Value: 2, Icon: "maximize fa-xl" }
-    ],
     CombatantImageType: {
         token: { id: "token", text: "selection-window-icon-type-token" },
         actor: { id: "actor", text: "selection-window-icon-type-actor" }
@@ -188,7 +176,7 @@ If you are the last or the second last combatant in the round the popcorn initia
         {
             reason = ReasonType.EndTurnNoCombat;
         }
-        else if (combat.current.combatantId == null)
+        else if (combat.current.combatantId === null)
         {
             reason = ReasonType.EndTurnNoCombatantPlaying;
         }
@@ -196,7 +184,7 @@ If you are the last or the second last combatant in the round the popcorn initia
         {
             const actorId = combat.turns.length > combat.turn ? combat.turns[combat.turn].actorId : "0";
             const actor = game.actors.get(actorId);
-            if (actor == null)
+            if (actor === null)
             {
                 reason = ReasonType.EndTurnActorIsNotValid;
             }
@@ -279,60 +267,33 @@ If you are the last or the second last combatant in the round the popcorn initia
         return text;
     }
 
-    static getSizeForSelectionWindow()
-    {
-        const windowSize = svelteGet(selectionWindowSize);
-        let windowSizeInfo = Constants.WindowSize.Normal.size;
-        switch (windowSize)
-        {
-        case Constants.WindowSize.Mini.id:
-            windowSizeInfo = Constants.WindowSize.Mini.size;
-        }
-
-        return {
-            w: windowSizeInfo.w - (svelteGet(previousActorsDrawerOpen) ? 0 : 100),
-            h: windowSizeInfo.h
-        };
-    }
-
     static getPositionForSelectionWindow()
     {
-        const { w, h } = this.getSizeForSelectionWindow();
-        const windowSize = svelteGet(selectionWindowPosition);
-        let x = 0;
-        let y = 0;
-        switch (windowSize)
+        const { width, height } = svelteGet(selectionWindowState);
+        const windowAnchorPosition = svelteGet(selectionWindowAnchor);
+        let x = window.innerWidth / 2 - width / 2;
+        let y = window.innerHeight / 2 - height / 2;
+        switch (windowAnchorPosition)
         {
         case "topLeft":
             x = 0;
             y = 0;
             break;
         case "topRight":
-            x = window.innerWidth - w;
+            x = window.innerWidth - width;
             y = 0;
             break;
         case "bottomLeft":
             x = 0;
-            y = window.innerHeight - h;
+            y = window.innerHeight - height;
             break;
         case "bottomRight":
-            x = window.innerWidth - w;
-            y = window.innerHeight - h;
-            break;
-        case "center":
-            x = window.innerWidth / 2 - w / 2;
-            y = window.innerHeight / 2 - h / 2;
+            x = window.innerWidth - width;
+            y = window.innerHeight - height;
             break;
         }
 
         return { x, y };
-    }
-
-    static getSizeAndPositionForSelectionWindow()
-    {
-        const { w, h } = this.getSizeForSelectionWindow();
-        const { x, y } = this.getPositionForSelectionWindow();
-        return { w, h, x, y };
     }
 
     static getCombatantIcon(combatant, type)

@@ -8,13 +8,14 @@ import {
     previousCombatants,
     selectableCombatants,
     selectedCombatantId,
-    selectionWindowPosition,
-    selectionWindowSize,
-    settings, statLabels, windowSizes
+    selectionWindowAnchor,
+    settings,
+    statLabels
 } from "./ModuleStore.js";
 import { themes as allThemes, currentTheme } from "@gerark/just-svelte-lib/styles/themeStore";
 import { Constants, locSettings, ModuleUtils } from "./ModuleUtils.js";
 import { ModuleAPI } from "./ModuleAPI.js";
+import { ModuleSettings } from "./ModuleSettings.js";
 
 export class StoreUpdater
 {
@@ -50,13 +51,6 @@ export class StoreUpdater
             store: canSelectWhenRoundIsOver
         });
         newSettings.push({
-            label: locSettings(`${Constants.Options.SelectionWindowSize}-title`),
-            description: locSettings(`${Constants.Options.SelectionWindowSize}-description`),
-            store: selectionWindowSize,
-            type: "Enum",
-            values: windowSizes
-        });
-        newSettings.push({
             label: locSettings(`${Constants.Options.CombatantImageType}-title`),
             description: locSettings(`${Constants.Options.CombatantImageType}-description`),
             store: currentIconImageType,
@@ -64,21 +58,11 @@ export class StoreUpdater
             values: combatantImageTypes
         });
         newSettings.push({
-            label: locSettings(`${Constants.Options.SelectionWindowPosition}-title`),
-            description: locSettings(`${Constants.Options.SelectionWindowPosition}-description`),
-            store: selectionWindowPosition,
+            label: locSettings(`${Constants.Options.SelectionWindowAnchor}-title`),
+            description: locSettings(`${Constants.Options.SelectionWindowAnchor}-description`),
+            store: selectionWindowAnchor,
             type: "Enum",
             values: layoutCorners
-        });
-
-        const themes = svelteGet(allThemes);
-        const themeOptions = [];
-        themes.forEach((theme) =>
-        {
-            themeOptions.push({
-                value: theme,
-                label: theme
-            });
         });
 
         newSettings.push({
@@ -86,26 +70,13 @@ export class StoreUpdater
             description: locSettings(`${Constants.Options.Theme}-description`),
             store: currentTheme,
             type: "Enum",
-            options: themeOptions,
             values: allThemes
         });
-
-        if (!ModuleAPI.instance.areCommonMacrosInstalled())
-        {
-            newSettings.push({
-                label: locSettings(`${Constants.Options.InstallCommonMacros}-title`),
-                description: locSettings(`${Constants.Options.InstallCommonMacros}-description`),
-                type: "Function",
-                store: writable(() =>
-                {
-                    ModuleAPI.instance.installCommonMacros();
-                }),
-            });
-        }
 
         newSettings.push({
             id: 5,
             label: locSettings(`${Constants.Options.Stats}-title`),
+            description: locSettings(`${Constants.Options.Stats}-description`),
             dndzone: 'stats',
             create: (event) =>
             {
