@@ -1,8 +1,8 @@
-import { avatarSize, isTokenPickerRunning, showActorStats } from "./ModuleStore.js";
+import { isTokenPickerRunning, selectedCombatantId, showActorStats } from "./ModuleStore.js";
 import { CanvasInteraction } from "./CanvasInteraction.js";
-import { Constants } from "./ModuleUtils.js";
-import { ModuleSettings } from "./ModuleSettings.js";
 import { ModuleAPI } from "./ModuleAPI.js";
+import { locWindow } from "./ModuleUtils.js";
+import { get as svelteGet } from "svelte/store";
 
 /**
  *
@@ -20,12 +20,11 @@ export default function getToolboxActions(combatantId, avatarSizeVal)
         id = addAction(actions, buildPanToCombatantAction(), id);
     }
 
-    id = addAction(actions, buildAvatarSizeAction(avatarSizeVal), id);
     id = addAction(actions, toggleStatAction(), id);
 
     if (game.user.isGM)
     {
-        id = addAction(actions, buildConfigAction(avatarSizeVal), id);
+        addAction(actions, buildConfigAction(avatarSizeVal), id);
     }
     return actions;
 }
@@ -52,48 +51,23 @@ const buildTokenPickingAction = () =>
 {
     return {
         icon: "fa-solid fa-eye-dropper",
-        command: () =>
+        onClick: () =>
         {
             isTokenPickerRunning.set(true);
         },
-        tooltip: "tools.select-from-token.tooltip"
+        description: locWindow("tools.select-from-token.tooltip")
     };
 };
 
-const buildPanToCombatantAction = (combatantId) =>
+const buildPanToCombatantAction = () =>
 {
     return {
         icon: "fa-solid fa-bullseye",
-        command: () =>
+        onClick: () =>
         {
-            CanvasInteraction.panToCombatantToken(combatantId);
+            CanvasInteraction.panToCombatantToken(svelteGet(selectedCombatantId));
         },
-        tooltip: "tools.zoom-combatant.tooltip"
-    };
-};
-
-const buildAvatarSizeAction = (avatarSizeVal) =>
-{
-    return {
-        label: `${avatarSizeVal + 1}x`,
-        command: () =>
-        {
-            avatarSize.update((size) =>
-            {
-                if (size < Constants.AvatarSizes.length - 1)
-                {
-                    return size + 1;
-                }
-                else
-                {
-                    size = 0;
-                }
-
-                return size;
-            });
-            ModuleSettings.save();
-        },
-        tooltip: "tools.change-avatar-size.tooltip"
+        description: locWindow("tools.zoom-combatant.tooltip")
     };
 };
 
@@ -101,14 +75,14 @@ const toggleStatAction = () =>
 {
     return {
         icon: "fa-solid fa-list-ol",
-        command: () =>
+        onClick: () =>
         {
             showActorStats.update((val) =>
             {
                 return !val;
             });
         },
-        tooltip: "tools.toggleStats.tooltip"
+        description: locWindow("tools.toggleStats.tooltip")
     };
 };
 
@@ -116,10 +90,10 @@ const buildConfigAction = () =>
 {
     return {
         icon: "fa-solid fa-gear",
-        command: () =>
+        onClick: () =>
         {
             ModuleAPI.instance.showConfig();
         },
-        tooltip: "tools.configuration.tooltip"
+        description: locWindow("tools.configuration.tooltip")
     };
 };

@@ -12,7 +12,7 @@ export class ConfigurationWindowApplicationProxy extends FormApplication
         ModuleAPI.instance.showConfig();
     }
 
-    async _updateObject(event, formData)
+    async _updateObject(/* event, formData*/)
     {
     }
 
@@ -29,11 +29,11 @@ export default class ConfigurationWindowApplication extends SvelteApplication
         const moduleAPI = game.modules.get("just-popcorn-initiative").api;
         return foundry.utils.mergeObject(super.defaultOptions, {
             id: 'popcorn-initiative-config',
-            classes: ['tjs-essential-svelte-esm'],
+            classes: ['configuration-window'],
             resizable: true,
             title: locSettings("window-title"),
-            width: 500,
-            height: 300,
+            width: 800,
+            height: 500,
 
             svelte: {
                 class: ConfigurationWindow,

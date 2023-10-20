@@ -11,7 +11,7 @@ export default class SelectionWindowApplication extends SvelteApplication
         const { w, h, x, y } = ModuleUtils.getSizeAndPositionForSelectionWindow();
         return foundry.utils.mergeObject(super.defaultOptions, {
             id: 'popcorn-initiative-overlay',
-            classes: ['tjs-essential-svelte-esm'],
+            classes: ['selection-window'],
             resizable: true,
             width: w,
             height: h,

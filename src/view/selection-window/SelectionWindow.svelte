@@ -1,155 +1,156 @@
 <script>
-   import { getContext, onMount } from 'svelte';
-   import { EmptyApplicationShell } from '#runtime/svelte/component/core';
-   import { draggable } from '#runtime/svelte/store/position';
-   import { locWindow } from "../../ModuleUtils.js";
-   import { ModuleSettings } from "../../ModuleSettings.js";
-   import {
-      selectableCombatants,
-      previousCombatants,
-      isAnyCombatantSelected,
-      selectedCombatantId,
-      toolboxActions,
-       showActorStats,
-      isSelectionWindowHovered, isTokenPickerRunning, previousActorsDrawerOpen
-   } from "../../ModuleStore.js";
-   import CombatantList from "./CombatantList.svelte";
-   import CombatantGrid from "./CombatantGrid.svelte";
-   import CombatantSelectionToolbox from "./Toolbox.svelte";
-   import { CanvasInteraction } from "../../CanvasInteraction.js";
-   import TokenPickerWatermark from "./TokenPickerWatermark.svelte";
-   import SimpleButton from "../SimpleButton.svelte";
-   import SimpleDrawer from "./SimpleDrawer.svelte";
+    import { getContext } from 'svelte';
+    import { ApplicationShell } from '#runtime/svelte/component/core';
+    import { locWindow } from "../../ModuleUtils.js";
+    import { ModuleSettings } from "../../ModuleSettings.js";
+    import {
+        selectableCombatants,
+        previousCombatants,
+        isAnyCombatantSelected,
+        selectedCombatantId,
+        toolboxActions,
+        showActorStats,
+        isSelectionWindowHovered, isTokenPickerRunning, previousActorsDrawerOpen
+    } from "../../ModuleStore.js";
+    import { currentTheme } from "@gerark/just-svelte-lib/styles/themeStore";
+    import {
+        Theme,
+        Flex,
+        TabControl,
+        Tab,
+        Button,
+        Typography,
+        ButtonToolbar
+    } from "@gerark/just-svelte-lib/components";
+    import CombatantGrid from "./CombatantGrid.svelte";
+    import TokenPicker from "./TokenPicker.svelte";
+    import { CanvasInteraction } from "../../CanvasInteraction.js";
 
-   export let elementRoot;
+    export let elementRoot;
 
-   const { application, moduleAPI } = getContext('#external');
-   const position = application.position;
+    const { application, moduleAPI } = getContext('#external');
+    const headerButtonNoClose = application.reactive.storeAppOptions.headerButtonNoClose;
+    setTimeout(() =>
+    {
+        headerButtonNoClose.set(true);
+    }, 1);
 
-   function _panToToken(id)
-   {
-      CanvasInteraction.panToCombatantToken(id);
-   }
+    function _panToToken(id)
+    {
+        CanvasInteraction.panToCombatantToken(id);
+    }
 
-   function _highlightToken(event, id, highlight = true)
-   {
-      CanvasInteraction.highlightCombatantToken(event, id, highlight);
-   }
+    function _highlightToken(event, id, highlight = true)
+    {
+        CanvasInteraction.highlightCombatantToken(event, id, highlight);
+    }
 
-   function _onConfirm()
-   {
-      moduleAPI.executePassTurnTo($selectedCombatantId);
-   }
+    function _onConfirm()
+    {
+        moduleAPI.executePassTurnTo($selectedCombatantId);
+    }
 
-   function _onWindowHover(isHover)
-   {
-      $isSelectionWindowHovered = isHover;
-   }
+    function _onWindowHover(isHover)
+    {
+        $isSelectionWindowHovered = isHover;
+    }
 
-   function _onActionRequested(ev)
-   {
-      ev.detail();
-   }
+    function _onPreviousActorsToggled()
+    {
+        ModuleSettings.saveSetting(previousActorsDrawerOpen);
+        _updateWindowSize();
+    }
 
-   function _disableTokenPicker()
-   {
-      $isTokenPickerRunning = false;
-   }
-
-   function _onPreviousActorsToggled()
-   {
-      ModuleSettings.saveSetting(previousActorsDrawerOpen);
-      _updateWindowSize();
-   }
-
-   function _updateWindowSize()
-   {
-      if ($previousActorsDrawerOpen)
-      {
-         elementRoot.style.width = "615px";
-      }
-      else
-      {
-         elementRoot.style.width = "515px";
-      }
-   }
+    function _updateWindowSize()
+    {
+        if ($previousActorsDrawerOpen)
+        {
+            elementRoot.style.width = "615px";
+        }
+        else
+        {
+            elementRoot.style.width = "515px";
+        }
+    }
 </script>
 
 <svelte:options accessors={true}/>
 
-<EmptyApplicationShell bind:elementRoot>
-   <div class="drag-target mainContent" use:draggable={{ position, hasTargetClassList: ['drag-target'] }}
-        on:mouseenter={(e) => _onWindowHover(true)}
-        on:mouseleave={(e) => _onWindowHover(false)}
-        role=application>
-      <div class="drag-target content" style="--max-height: {(application.position.height - 60) + `px`}">
-         <div class="drag-target prevActorContainer">
-            <SimpleDrawer bind:isOpen={$previousActorsDrawerOpen} on:toggle={() => { _onPreviousActorsToggled() }}>
-               <CombatantList combatants="{$previousCombatants}"></CombatantList>
-            </SimpleDrawer>
-         </div>
-         <CombatantGrid combatants="{$selectableCombatants}"
-                        on:itemClick={(e) => $selectedCombatantId = e.detail.id}
-                        on:itemDoubleClick={(e) => { $selectedCombatantId = e.detail.id; _panToToken($selectedCombatantId) }}
-                        on:itemMouseEnter={(e) => { _highlightToken(e, e.detail.id, true); }}
-                        on:itemMouseExit={(e) => { _highlightToken(e, e.detail.id, false); }}
-                        showStats="{$showActorStats}">
-         </CombatantGrid>
-         <CombatantSelectionToolbox actions="{$toolboxActions}"
-                                    on:actionRequested={_onActionRequested}></CombatantSelectionToolbox>
-      </div>
-      <div class="drag-target modalButtonContainer">
-         {#if $isAnyCombatantSelected}
-            <SimpleButton text="{locWindow(`confirm.button`)}" icon="check"
-                          on:click={_onConfirm}/>
-         {/if}
-         <SimpleButton text="{locWindow(`close.button`)}" icon="xmark" isCancelButton="true"
-                       on:click={ () => moduleAPI.closeSelectionWindow() }/>
-      </div>
-   </div>
-   {#if $isTokenPickerRunning}
-      <TokenPickerWatermark
-       on:mouseenter={(e) => _onWindowHover(true)}
-       on:mouseleave={(e) => _onWindowHover(false)}
-       on:click={(e) => _disableTokenPicker()}></TokenPickerWatermark>
-   {/if}
-</EmptyApplicationShell>
+<ApplicationShell bind:elementRoot>
+    <div style:width="100%"
+         style:height="100%"
+         on:mouseenter={(e) => _onWindowHover(true)}
+         on:mouseleave={(e) => _onWindowHover(false)}
+         role=application>
+        <Theme theme="{$currentTheme}">
+            <Flex class="background vertical" height="100%" width="100%"
+                  flex="{['1 1', '0 0']}">
+                {#if !$isTokenPickerRunning}
+                    <Flex class="horizontal  clip-overflow" height="100%" min-height="50px" flex="{['1 0','0 0']}">
+                        <TabControl>
+                            <Typography slot="header" class="size-sm align-center" let:tab>{tab.label}</Typography>
+                            <Tab
+                                    data="{{label: locWindow(`selectable-actors.title`) + ' (' + $selectableCombatants.length + ')'}}">
+                                <CombatantGrid combatants="{$selectableCombatants}"
+                                               on:itemClick={(e) => $selectedCombatantId = e.detail.id}
+                                               on:itemDoubleClick={(e) => { $selectedCombatantId = e.detail.id; _panToToken($selectedCombatantId) }}
+                                               on:itemMouseEnter={(e) => { _highlightToken(e, e.detail.id, true); }}
+                                               on:itemMouseExit={(e) => { _highlightToken(e, e.detail.id, false); }}
+                                               showStats="{$showActorStats}">
+                                </CombatantGrid>
+                            </Tab>
+                            <Tab
+                                    data="{{label: locWindow(`previous-actors.title`) + ' (' + $previousCombatants.length + ')'}}">
+                                <CombatantGrid combatants="{$previousCombatants}" showStats="{$showActorStats}"
+                                               areCombatantInteractable="{false}">
+                                </CombatantGrid>
+                            </Tab>
+                        </TabControl>
+                        <div style="padding: var(--tjust-padding-xl);width:100%;height:100%;box-sizing: border-box;">
+                            <ButtonToolbar items="{$toolboxActions}" direction="vertical"></ButtonToolbar>
+                        </div>
+                    </Flex>
+                    <Flex class="horizontal thick" height="auto">
+                        {#if $isAnyCombatantSelected}
+                            <Button class="btn success md" on:click="{_onConfirm}" width="100%">
+                                {locWindow(`confirm.button`)}
+                                <i class="fa fa-check"></i>
+                            </Button>
+                        {/if}
+                        <Button class="btn error md" on:click="{() => moduleAPI.closeSelectionWindow()}"
+                                width="100%">
+                            {locWindow(`close.button`)}
+                            <i class="fa fa-xmark"></i>
+                        </Button>
+                    </Flex>
+                {:else}
+                    <TokenPicker
+                            on:mouseenter={(e) => _onWindowHover(true)}
+                            on:mouseleave={(e) => _onWindowHover(false)}>
+                    </TokenPicker>
+                {/if}
+            </Flex>
+        </Theme>
+    </div>
+</ApplicationShell>
 
 <style lang="scss">
-   .mainContent {
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      background: linear-gradient(0deg, $bg-color-primary 88%, $bg-color-primary 100%);
-      border-radius: 15px;
-      border-color: $bg-color-primary;
-      gap: 10px;
-      height: 100%;
-      width: 100%;
-      padding: 8px;
-   }
+  .content {
+    max-height: var(--max-height);
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+    align-content: flex-start;
+    gap: 5px;
+    flex: 1;
+  }
 
-   .content {
-      max-height: var(--max-height);
-      display: flex;
-      flex-flow: row nowrap;
-      justify-content: flex-start;
-      align-items: flex-start;
-      align-content: flex-start;
-      gap: 5px;
-      flex: 1;
-   }
-
-   .prevActorContainer {
-      height: 100%;
-      flex: auto 0;
-   }
-
-   .modalButtonContainer {
-      display: flex;
-      flex-flow: row nowrap;
-      justify-content: center;
-      margin-top: auto;
-      gap: 5px;
-   }
+  .modalButtonContainer {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    margin-top: auto;
+    gap: 5px;
+  }
 </style>

@@ -18,7 +18,10 @@ export const Constants = {
         AvatarSize: "avatar-size",
         InstallCommonMacros: "install-common-macros",
         SelectionWindowSize: "selection-window-size",
-        SelectionWindowPosition: "selection-window-position"
+        SelectionWindowPosition: "selection-window-position",
+        CombatantImageType: "selection-window-icon-type",
+        Stats: "selection-window-stats",
+        Theme: "selection-window-theme"
     },
     WindowSize: {
         Normal: { id: "normal", text: "selection-window-size-normal", size: { w: 615, h: 340 } },
@@ -30,7 +33,11 @@ export const Constants = {
         { Value: 0, Icon: "maximize fa-sm" },
         { Value: 1, Icon: "maximize fa-md" },
         { Value: 2, Icon: "maximize fa-xl" }
-    ]
+    ],
+    CombatantImageType: {
+        token: { id: "token", text: "selection-window-icon-type-token" },
+        actor: { id: "actor", text: "selection-window-icon-type-actor" }
+    }
 };
 
 export const ReasonType = {
@@ -256,12 +263,20 @@ If you are the last or the second last combatant in the round the popcorn initia
 
     static resolvePropertyText(actor, inputText)
     {
-        const regex = /\{([^}]+)}/g;
+        const propertyPathRegex = /\{([^}]+)}/g;
 
-        return inputText.replace(regex, (match, capturedText) =>
+        let text = inputText.replace(propertyPathRegex, (match, capturedText) =>
         {
             return ModuleUtils.getPropertyByPath(actor, capturedText);
         });
+
+        const iconPathRegex = /\[\[(.*?)]]/g;
+        text = text.replace(iconPathRegex, (match, capturedText) =>
+        {
+            return `<i class="fa fa-${capturedText}"></i>`;
+        });
+
+        return text;
     }
 
     static getSizeForSelectionWindow()
@@ -318,6 +333,24 @@ If you are the last or the second last combatant in the round the popcorn initia
         const { w, h } = this.getSizeForSelectionWindow();
         const { x, y } = this.getPositionForSelectionWindow();
         return { w, h, x, y };
+    }
+
+    static getCombatantIcon(combatant, type)
+    {
+        const actor = game.actors.get(combatant.actorId);
+        if (actor)
+        {
+            if (type === Constants.CombatantImageType.actor.id)
+            {
+                return actor.img;
+            }
+            else if (type === Constants.CombatantImageType.token.id)
+            {
+                return combatant.img;
+            }
+        }
+
+        return combatant.img;
     }
 }
 

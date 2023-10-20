@@ -1,4 +1,4 @@
-<script>
+<!--<script>
    export let name;
    export let icon;
    export let isSelected;
@@ -188,4 +188,4 @@
          filter: grayscale(0%) opacity(100%);
       }
    }
-</style>
+</style>-->
