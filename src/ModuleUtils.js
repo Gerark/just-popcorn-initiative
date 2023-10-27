@@ -1,8 +1,7 @@
 import {
     canSelectWhenRoundIsOver,
-    selectionWindowPosition,
-    previousActorsDrawerOpen,
-    selectionWindowSize
+    selectionWindowAnchor,
+    selectionWindowState
 } from "./ModuleStore.js";
 import { get as svelteGet } from "svelte/store";
 
@@ -16,12 +15,16 @@ export const Constants = {
         CanLastActorSelectThemselves: "select-themselves-when-round-is-over",
         PreviousActorsDrawerOpen: "previous-actor-drawer-open",
         InstallCommonMacros: "install-common-macros",
-        SelectionWindowSize: "selection-window-size",
-        SelectionWindowPosition: "selection-window-position"
+        ResetToDefault: "reset-to-default",
+        SelectionWindowAnchor: "selection-window-anchor",
+        CombatantImageType: "selection-window-icon-type",
+        Stats: "selection-window-stats",
+        SelectionWindowState: "selection-window-state",
+        Theme: "selection-window-theme"
     },
-    WindowSize: {
-        Normal: { id: "normal", text: "selection-window-size-normal", size: { w: 615, h: 340 } },
-        Mini: { id: "mini", text: "selection-window-size-mini", size: { w: 615, h: 240 } }
+    CombatantImageType: {
+        token: { id: "token", text: "selection-window-icon-type-token" },
+        actor: { id: "actor", text: "selection-window-icon-type-actor" }
     }
 };
 
@@ -86,6 +89,11 @@ export class NotificationUtils
     static warning(message)
     {
         ui.notifications.warn(this._moduleMessage(message));
+    }
+
+    static message(message)
+    {
+        ui.notifications.notify(this._moduleMessage(message));
     }
 
     static errorPromise(message)
@@ -173,7 +181,7 @@ If you are the last or the second last combatant in the round the popcorn initia
         {
             reason = ReasonType.EndTurnNoCombat;
         }
-        else if (combat.current.combatantId == null)
+        else if (combat.current.combatantId === null)
         {
             reason = ReasonType.EndTurnNoCombatantPlaying;
         }
@@ -181,7 +189,7 @@ If you are the last or the second last combatant in the round the popcorn initia
         {
             const actorId = combat.turns.length > combat.turn ? combat.turns[combat.turn].actorId : "0";
             const actor = game.actors.get(actorId);
-            if (actor == null)
+            if (actor === null)
             {
                 reason = ReasonType.EndTurnActorIsNotValid;
             }
@@ -235,60 +243,102 @@ If you are the last or the second last combatant in the round the popcorn initia
         return game.macros.contents.find((m) => m.name === `${Constants.ModuleTextNameAcronym} - ${name}`);
     }
 
-    static getSizeForSelectionWindow()
+    static getPropertyByPath(obj, path)
     {
-        const windowSize = svelteGet(selectionWindowSize);
-        let windowSizeInfo = Constants.WindowSize.Normal.size;
-        switch (windowSize)
+        const segments = path.split('.');
+        for (let i = 0; i < segments.length; i++)
         {
-        case Constants.WindowSize.Mini.id:
-            windowSizeInfo = Constants.WindowSize.Mini.size;
+            obj = obj[segments[i]];
+            if (!obj)
+            {
+                return;
+            }
         }
 
-        return {
-            w: windowSizeInfo.w - (svelteGet(previousActorsDrawerOpen) ? 0 : 100),
-            h: windowSizeInfo.h
-        };
+        return obj;
+    }
+
+    static resolvePropertyText(actor, inputText)
+    {
+        const propertyPathRegex = /\{([^}]+)}/g;
+
+        let text = inputText.replace(propertyPathRegex, (match, capturedText) =>
+        {
+            return ModuleUtils.getPropertyByPath(actor, capturedText);
+        });
+
+        const iconPathRegex = /\[\[(.*?)]]/g;
+        text = text.replace(iconPathRegex, (match, capturedText) =>
+        {
+            return `<i class="fa fa-${capturedText}"></i>`;
+        });
+
+        return text;
     }
 
     static getPositionForSelectionWindow()
     {
-        const { w, h } = this.getSizeForSelectionWindow();
-        const windowSize = svelteGet(selectionWindowPosition);
-        let x = 0;
-        let y = 0;
-        switch (windowSize)
+        const { width, height } = svelteGet(selectionWindowState);
+        const windowAnchorPosition = svelteGet(selectionWindowAnchor);
+        let x = window.innerWidth / 2 - width / 2;
+        let y = window.innerHeight / 2 - height / 2;
+        switch (windowAnchorPosition)
         {
         case "topLeft":
             x = 0;
             y = 0;
             break;
         case "topRight":
-            x = window.innerWidth - w;
+            x = window.innerWidth - width;
             y = 0;
             break;
         case "bottomLeft":
             x = 0;
-            y = window.innerHeight - h;
+            y = window.innerHeight - height;
             break;
         case "bottomRight":
-            x = window.innerWidth - w;
-            y = window.innerHeight - h;
-            break;
-        case "center":
-            x = window.innerWidth / 2 - w / 2;
-            y = window.innerHeight / 2 - h / 2;
+            x = window.innerWidth - width;
+            y = window.innerHeight - height;
             break;
         }
 
         return { x, y };
     }
 
-    static getSizeAndPositionForSelectionWindow()
+    static getCombatantIcon(combatant, type)
     {
-        const { w, h } = this.getSizeForSelectionWindow();
-        const { x, y } = this.getPositionForSelectionWindow();
-        return { w, h, x, y };
+        const actor = game.actors.get(combatant.actorId);
+        if (actor)
+        {
+            if (type === Constants.CombatantImageType.actor.id)
+            {
+                return actor.img;
+            }
+            else if (type === Constants.CombatantImageType.token.id)
+            {
+                return combatant.img;
+            }
+        }
+
+        return combatant.img;
+    }
+
+    static getActorIcon(actorId, type)
+    {
+        const actor = game.actors.get(actorId);
+        if (actor)
+        {
+            if (type === Constants.CombatantImageType.actor.id)
+            {
+                return actor.img;
+            }
+            else if (type === Constants.CombatantImageType.token.id)
+            {
+                return actor.prototypeToken.texture.src;
+            }
+        }
+
+        return "";
     }
 }
 

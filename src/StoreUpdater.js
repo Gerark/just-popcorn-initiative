@@ -1,17 +1,22 @@
-import { get as svelteGet, get as storeGet } from "svelte/store";
+import { get as svelteGet, writable } from "svelte/store";
 import {
     canLastActorSelectThemselves,
-    canSelectWhenRoundIsOver,
-    overrideEndTurnButton,
+    canSelectWhenRoundIsOver, currentIconImageType, combatantImageTypes,
     currentTokenPickerTarget,
-    isTokenPickerRunning,
+    isTokenPickerRunning, layoutCorners,
+    overrideEndTurnButton,
     previousCombatants,
     selectableCombatants,
-    selectedCombatantId, selectionWindowSize, settings, selectionWindowPosition
+    selectedCombatantId,
+    selectionWindowAnchor,
+    settings,
+    statLabels
 } from "./ModuleStore.js";
-import { locSettings, ModuleUtils, Constants } from "./ModuleUtils.js";
+import { themes as allThemes, currentTheme } from "@gerark/just-svelte-lib/styles/themeStore";
+import { Constants, locSettings, ModuleUtils } from "./ModuleUtils.js";
 import { ModuleAPI } from "./ModuleAPI.js";
-import { CanvasInteraction } from "./CanvasInteraction.js";
+import { ModuleSettings } from "./ModuleSettings.js";
+import * as svelte from "svelte";
 
 export class StoreUpdater
 {
@@ -32,57 +37,50 @@ export class StoreUpdater
     {
         const newSettings = [];
         newSettings.push({
-            name: locSettings(`${Constants.Options.OverrideNextTurnButton}-title`),
+            label: locSettings(`${Constants.Options.OverrideNextTurnButton}-title`),
             description: locSettings(`${Constants.Options.OverrideNextTurnButton}-description`),
-            value: overrideEndTurnButton
+            store: overrideEndTurnButton
         });
         newSettings.push({
-            name: locSettings(`${Constants.Options.CanLastActorSelectThemselves}-title`),
+            label: locSettings(`${Constants.Options.CanLastActorSelectThemselves}-title`),
             description: locSettings(`${Constants.Options.CanLastActorSelectThemselves}-description`),
-            value: canLastActorSelectThemselves
+            store: canLastActorSelectThemselves
         });
         newSettings.push({
-            name: locSettings(`${Constants.Options.CanSelectWhenRoundIsOver}-title`),
+            label: locSettings(`${Constants.Options.CanSelectWhenRoundIsOver}-title`),
             description: locSettings(`${Constants.Options.CanSelectWhenRoundIsOver}-description`),
-            value: canSelectWhenRoundIsOver
+            store: canSelectWhenRoundIsOver
         });
         newSettings.push({
-            name: locSettings(`${Constants.Options.SelectionWindowSize}-title`),
-            description: locSettings(`${Constants.Options.SelectionWindowSize}-description`),
-            value: selectionWindowSize,
-            options: [
-                { value: Constants.WindowSize.Normal.id, label: locSettings(Constants.WindowSize.Normal.text) },
-                { value: Constants.WindowSize.Mini.id, label: locSettings(Constants.WindowSize.Mini.text) }
-            ]
+            label: locSettings(`${Constants.Options.CombatantImageType}-title`),
+            description: locSettings(`${Constants.Options.CombatantImageType}-description`),
+            store: currentIconImageType,
+            type: "Enum",
+            values: combatantImageTypes
         });
         newSettings.push({
-            name: locSettings(`${Constants.Options.SelectionWindowPosition}-title`),
-            description: locSettings(`${Constants.Options.SelectionWindowPosition}-description`),
-            value: selectionWindowPosition,
-            options: [
-                { value: "topLeft", label: locSettings(`${Constants.Options.SelectionWindowPosition}-topLeft`) },
-                { value: "topRight", label: locSettings(`${Constants.Options.SelectionWindowPosition}-topRight`) },
-                { value: "bottomLeft", label: locSettings(`${Constants.Options.SelectionWindowPosition}-bottomLeft`) },
-                {
-                    value: "bottomRight",
-                    label: locSettings(`${Constants.Options.SelectionWindowPosition}-bottomRight`)
-                },
-                { value: "center", label: locSettings(`${Constants.Options.SelectionWindowPosition}-center`) }
-            ]
+            label: locSettings(`${Constants.Options.SelectionWindowAnchor}-title`),
+            description: locSettings(`${Constants.Options.SelectionWindowAnchor}-description`),
+            store: selectionWindowAnchor,
+            type: "Enum",
+            values: layoutCorners
         });
-        newSettings.push({ separator: true });
 
-        if (!ModuleAPI.instance.areCommonMacrosInstalled())
-        {
-            newSettings.push({
-                name: locSettings(`${Constants.Options.InstallCommonMacros}-title`),
-                description: locSettings(`${Constants.Options.InstallCommonMacros}-description`),
-                command: () =>
-                {
-                    ModuleAPI.instance.installCommonMacros();
-                }
-            });
-        }
+        const allDefaultThemesValue = svelteGet(allThemes);
+        const newList = [...allDefaultThemesValue, {
+            id: allDefaultThemesValue.length,
+            label: 'old-orange',
+            value: 'old-orange'
+        }];
+        const allThemesV2 = writable(newList);
+
+        newSettings.push({
+            label: locSettings(`${Constants.Options.Theme}-title`),
+            description: locSettings(`${Constants.Options.Theme}-description`),
+            store: currentTheme,
+            type: "Enum",
+            values: allThemesV2
+        });
         settings.set(newSettings);
     }
 
@@ -106,47 +104,6 @@ export class StoreUpdater
             });
             return list;
         });
-    }
-
-    static getToolboxActions(combatantId)
-    {
-        const actions = [];
-        actions.push({
-            id: 1,
-            icon: "fa-solid fa-eye-dropper",
-            command: () =>
-            {
-                isTokenPickerRunning.set(true);
-            },
-            tooltip: "tools.select-from-token.tooltip"
-        });
-
-        if (combatantId !== "-1")
-        {
-            actions.push({
-                id: 2,
-                icon: "fa-solid fa-bullseye",
-                command: () =>
-                {
-                    CanvasInteraction.panToCombatantToken(combatantId);
-                },
-                tooltip: "tools.zoom-combatant.tooltip"
-            });
-        }
-
-        if (game.user.isGM)
-        {
-            actions.push({
-                id: 3,
-                icon: "fa-solid fa-gear",
-                command: () =>
-                {
-                    ModuleAPI.instance.showConfig();
-                },
-                tooltip: "tools.configuration.tooltip"
-            });
-        }
-        return actions;
     }
 
     static onGlobalClick()
@@ -184,7 +141,7 @@ export class StoreUpdater
             if (turn + 1 === combat.turns.length)
             {
                 turn = -1;
-                if (!storeGet(canLastActorSelectThemselves))
+                if (!svelteGet(canLastActorSelectThemselves))
                 {
                     lastIndex -= 1;
                 }
@@ -193,16 +150,29 @@ export class StoreUpdater
             for (let i = turn + 1; i < lastIndex; i++)
             {
                 const combatant = combat.turns[i];
-                const isSelected = storeGet(selectedCombatantId) === combatant.id;
+                const actorStats = [];
+                const actor = game.actors.get(combatant.actorId);
+                if (actor)
+                {
+                    const labels = svelteGet(statLabels);
+                    labels.forEach((x) =>
+                    {
+                        const resolvedText = ModuleUtils.resolvePropertyText(actor, x.label);
+                        actorStats.push({ label: resolvedText, id: actorStats.length, showToPlayer: x.showToPlayer });
+                    });
+                }
+
+                const isSelected = svelteGet(selectedCombatantId) === combatant.id;
                 list.push({
-                    icon: combatant.img,
+                    icon: ModuleUtils.getCombatantIcon(combatant, svelteGet(currentIconImageType)),
                     name: combatant.name,
                     id: combatant.id,
                     isSelected,
                     tokenId: combatant.tokenId,
                     actorId: combatant.actorId,
                     isHighlighted: false,
-                    owners: ModuleUtils.retrieveOwnersInfo(combatant.actorId)
+                    owners: ModuleUtils.retrieveOwnersInfo(combatant.actorId),
+                    stats: actorStats
                 });
             }
             list.sort((a, b) =>
@@ -226,7 +196,7 @@ export class StoreUpdater
             const endIndex = combat.turns.length;
             if (turn + 1 === combat.turns.length)
             {
-                if (storeGet(canLastActorSelectThemselves))
+                if (svelteGet(canLastActorSelectThemselves))
                 {
                     startIndex = endIndex;
                 }
@@ -239,11 +209,24 @@ export class StoreUpdater
             for (let i = startIndex; i <= turn && i < endIndex; i++)
             {
                 const combatant = combat.turns[i];
+                const actorStats = [];
+                const actor = game.actors.get(combatant.actorId);
+                if (actor)
+                {
+                    const labels = svelteGet(statLabels);
+                    labels.forEach((x) =>
+                    {
+                        const resolvedText = ModuleUtils.resolvePropertyText(actor, x.label);
+                        actorStats.push({ label: resolvedText, id: actorStats.length, showToPlayer: x.showToPlayer });
+                    });
+                }
+
                 list.push({
-                    icon: combatant.img,
+                    icon: ModuleUtils.getCombatantIcon(combatant, svelteGet(currentIconImageType)),
                     name: combatant.name,
                     id: combatant.id,
-                    tokenId: combatant.tokenId
+                    tokenId: combatant.tokenId,
+                    stats: actorStats
                 });
             }
         }

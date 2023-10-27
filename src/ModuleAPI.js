@@ -1,6 +1,6 @@
 import SelectionWindowApplication from "./view/selection-window/SelectionWindowApplication.js";
 import { moduleSocket } from "./ModuleSocket.js";
-import { NotificationUtils, ModuleUtils, ReasonType, Constants } from "./ModuleUtils.js";
+import { NotificationUtils, ModuleUtils, ReasonType, Constants, locSettings } from "./ModuleUtils.js";
 import { StoreUpdater } from "./StoreUpdater.js";
 import { get as svelteGet } from "svelte/store";
 import {
@@ -11,6 +11,11 @@ import {
 } from "./ModuleStore.js";
 import { ModuleSettings } from "./ModuleSettings.js";
 import ConfigurationWindowApplication from "./view/configuration-window/ConfigurationWindowApplication.js";
+import { GenericTooltip } from '@gerark/just-svelte-lib/components';
+import { genericTooltipStore } from "@gerark/just-svelte-lib/components/Tooltip/tooltipStore";
+import StatsPicker from "./view/configuration-window/StatsPicker.svelte";
+import { statsPickerContextMenuStore } from "./view/configuration-window/statsPickerContextMenuStore.js";
+import { currentActorPreview } from "./ModuleStore.js";
 
 export class ModuleAPI
 {
@@ -39,6 +44,55 @@ export class ModuleAPI
         {
             StoreUpdater.onGlobalClick();
         });
+
+        this._createTooltip();
+        this._createStatsPicker();
+    }
+
+    _createTooltip()
+    {
+        const tooltipDiv = document.createElement("div");
+        tooltipDiv.id = "JustTooltip";
+        new GenericTooltip({
+            target: tooltipDiv,
+            props: {
+                tooltipStore: genericTooltipStore,
+                showDelay: 250,
+                hideDelay: 125,
+                offset: 10,
+                maxWidth: "300px"
+            }
+        });
+        document.body.appendChild(tooltipDiv);
+    }
+
+    _createStatsPicker()
+    {
+        const statsPickerDiv = document.createElement("div");
+        statsPickerDiv.id = "JustStatsPicker";
+        const statsPicker = new StatsPicker({
+            target: statsPickerDiv,
+            props: {
+                actorId: -1,
+                contextMenuStore: statsPickerContextMenuStore
+            }
+        });
+
+        currentActorPreview.subscribe((x) =>
+        {
+            if (x)
+            {
+                statsPicker.$set({ actorId: x.id });
+            }
+        });
+
+        statsPicker.$on('statpicked', (ev) =>
+        {
+            navigator.clipboard.writeText(`{${ev.detail}}`);
+            NotificationUtils.message(locSettings("stat.clipboard"));
+        });
+
+        document.body.appendChild(statsPickerDiv);
     }
 
     executePassTurnTo(combatantId)
@@ -130,6 +184,7 @@ export class ModuleAPI
         ModuleSettings.save().then(
             () =>
             {
+                this._updateCombatantsData(game.combat);
                 this.configWindow?.close();
                 this.configWindow = null;
             }

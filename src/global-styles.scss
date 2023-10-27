@@ -1,47 +1,48 @@
-$primary-color: #FF8800;
-$primary-disabled-color: #FF8800AA;
-$secondary-color: #FFFFFF;
-$secondary-disabled-color: #FFFFFF55;
-$error-color: #FF3300;
-$bg-color-primary: #000000EE;
-$bg-color-table-item-odd: #181818EE;
-$bg-color-table-item-even: #202020EE;
+@import "../node_modules/@gerark/just-svelte-lib/dist/styles/themes/crimson.scss";
+@import "../node_modules/@gerark/just-svelte-lib/dist/styles/themes/dark-juice.scss";
+@import "../node_modules/@gerark/just-svelte-lib/dist/styles/themes/dust.scss";
 
-.button {
-  background: $bg-color-primary;
-  color: $primary-color;
-  border-color: $primary-color;
+@include create-theme(
+                "old-orange",
+                #111111, #AAAAAA,
+                #f75900, #000000,
+                #f75900, #FFFFFF,
+                #6366f1, #FFFFFF,
+                #f75900, #000000,
+                #eab308, #000000,
+                #FF2222, #FFFFFF
+);
+
+.configuration-window {
+  background: var(--tjust-bg-color);
+
+  .window-header {
+    border: none;
+  }
+
+  .window-content {
+    padding: 0;
+    background: var(--tjust-bg-color);
+    overflow-y: clip;
+  }
 }
 
-.button.cancel {
-  border-color: $error-color;
-  color: $error-color;
+.selection-window {
+  background: var(--tjust-bg-color);
+
+  .window-header {
+    border: none;
+  }
+
+  .window-content {
+    padding: 0;
+    background: var(--tjust-bg-color);
+    overflow-y: clip;
+  }
 }
 
-.button:hover {
-  border-color: $secondary-color;
-  color: $secondary-color;
-  box-shadow: none;
-}
-
-.button:active {
-  border-color: $secondary-color;
-  color: $primary-color;
-  box-shadow: none;
-  scale: 0.98;
-}
-
-.button:focus {
-  border-color: $primary-color;
-  color: $primary-color;
-  box-shadow: none;
-}
-
-.button.icon {
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: center;
-  align-items: center;
-  align-content: center;
-  gap: 5px;
+.stat-item {
+  color: var(--tjust-on-surface);
+  font-family: var(--tjust-font-family);
+  font-size: var(--tjust-font-size-2xs);
 }

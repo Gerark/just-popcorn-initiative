@@ -1,19 +1,22 @@
 import { derived, writable } from "svelte/store";
 import { ModuleUtils } from "./ModuleUtils.js";
-import { StoreUpdater } from "./StoreUpdater.js";
+import getToolboxActions from "./ToolboxActions.js";
 
 export const selectableCombatants = writable([]);
 export const previousCombatants = writable([]);
 export const isSelectionWindowHovered = writable(false);
 export const isTokenPickerRunning = writable(false);
-export const previousActorsDrawerOpen = writable(true);
-export const selectionWindowSize = writable("mini");
-export const selectionWindowPosition = writable("center");
+export const showActorStats = writable(false);
+export const statLabels = writable([]);
+export const currentIconImageType = writable("token");
+export const selectionWindowAnchor = writable("center");
+export const selectionWindowState = writable({});
 export const selectedCombatantId = _createSelectedCombatantId();
 export const canSelectWhenRoundIsOver = writable(true);
 export const canLastActorSelectThemselves = writable(false);
 export const overrideEndTurnButton = writable(true);
 export const settings = writable([]);
+export const currentActorPreview = writable(null);
 
 export const isAnyCombatantSelected = derived(selectableCombatants, ($selectableCombatants) =>
 {
@@ -22,9 +25,9 @@ export const isAnyCombatantSelected = derived(selectableCombatants, ($selectable
         return x.isSelected;
     });
 });
-export const toolboxActions = derived(selectedCombatantId, ($selectedCombatantId) =>
+export const toolboxActions = derived([selectedCombatantId], ([$selectedCombatantId]) =>
 {
-    return StoreUpdater.getToolboxActions($selectedCombatantId);
+    return getToolboxActions($selectedCombatantId);
 });
 
 export const currentTokenPickerTarget = derived([selectableCombatants, isTokenPickerRunning],
@@ -50,6 +53,9 @@ export const currentTokenPickerTarget = derived([selectableCombatants, isTokenPi
         }
         return tokenResult;
     });
+
+export const layoutCorners = writable([]);
+export const combatantImageTypes = writable([]);
 
 /**
  *

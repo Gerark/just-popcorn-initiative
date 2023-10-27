@@ -5,7 +5,6 @@ export class CanvasInteraction
     static panToCombatantToken(combatantId, duration = 1000)
     {
         const { result, token, reason } = ModuleUtils.tryGetToken(game.combat, combatantId);
-        console.log(reason);
         if (!result)
         {
             NotificationUtils.notify(reason);
