@@ -2,6 +2,17 @@
 @import "../node_modules/@gerark/just-svelte-lib/dist/styles/themes/dark-juice.scss";
 @import "../node_modules/@gerark/just-svelte-lib/dist/styles/themes/dust.scss";
 
+@include create-theme(
+                "old-orange",
+                #111111, #AAAAAA,
+                #f75900, #000000,
+                #f75900, #FFFFFF,
+                #6366f1, #FFFFFF,
+                #f75900, #000000,
+                #eab308, #000000,
+                #FF2222, #FFFFFF
+);
+
 .configuration-window {
   background: var(--tjust-bg-color);
 

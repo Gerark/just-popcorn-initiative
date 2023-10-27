@@ -16,6 +16,7 @@ import { themes as allThemes, currentTheme } from "@gerark/just-svelte-lib/style
 import { Constants, locSettings, ModuleUtils } from "./ModuleUtils.js";
 import { ModuleAPI } from "./ModuleAPI.js";
 import { ModuleSettings } from "./ModuleSettings.js";
+import * as svelte from "svelte";
 
 export class StoreUpdater
 {
@@ -65,36 +66,20 @@ export class StoreUpdater
             values: layoutCorners
         });
 
+        const allDefaultThemesValue = svelteGet(allThemes);
+        const newList = [...allDefaultThemesValue, {
+            id: allDefaultThemesValue.length,
+            label: 'old-orange',
+            value: 'old-orange'
+        }];
+        const allThemesV2 = writable(newList);
+
         newSettings.push({
             label: locSettings(`${Constants.Options.Theme}-title`),
             description: locSettings(`${Constants.Options.Theme}-description`),
             store: currentTheme,
             type: "Enum",
-            values: allThemes
-        });
-
-        newSettings.push({
-            id: 5,
-            label: locSettings(`${Constants.Options.Stats}-title`),
-            description: locSettings(`${Constants.Options.Stats}-description`),
-            dndzone: 'stats',
-            create: (event) =>
-            {
-                event.detail.result = {
-                    label: '',
-                    value: ''
-                };
-            },
-            copy: (event) =>
-            {
-                const clone = structuredClone(event.detail.item);
-                event.detail.result = clone;
-            },
-            listUpdated: (event) =>
-            {
-                statLabels.set(event.detail);
-            },
-            store: statLabels
+            values: allThemesV2
         });
         settings.set(newSettings);
     }
@@ -173,7 +158,7 @@ export class StoreUpdater
                     labels.forEach((x) =>
                     {
                         const resolvedText = ModuleUtils.resolvePropertyText(actor, x.label);
-                        actorStats.push(resolvedText);
+                        actorStats.push({ label: resolvedText, id: actorStats.length, showToPlayer: x.showToPlayer });
                     });
                 }
 
@@ -232,7 +217,7 @@ export class StoreUpdater
                     labels.forEach((x) =>
                     {
                         const resolvedText = ModuleUtils.resolvePropertyText(actor, x.label);
-                        actorStats.push(resolvedText);
+                        actorStats.push({ label: resolvedText, id: actorStats.length, showToPlayer: x.showToPlayer });
                     });
                 }
 

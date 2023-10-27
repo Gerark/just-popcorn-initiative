@@ -105,7 +105,7 @@ export class ModuleSettings
         this._addSetting(Constants.Options.Theme, String, "dark-juice", false, currentTheme);
         this._addSetting(Constants.Options.CombatantImageType, String, Constants.CombatantImageType.token.id, false, currentIconImageType);
         this._addSetting(Constants.Options.Stats, Array, [], false, statLabels);
-        this._addSetting(Constants.Options.SelectionWindowState, Object, {}, false, selectionWindowState);
+        this._addSetting(Constants.Options.SelectionWindowState, Object, {}, false, selectionWindowState, false);
     }
 
     static _addSetting(id, type, defaultValue, requiresReload, storeValue, isGlobal = true)

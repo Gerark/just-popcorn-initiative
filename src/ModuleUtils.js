@@ -91,6 +91,11 @@ export class NotificationUtils
         ui.notifications.warn(this._moduleMessage(message));
     }
 
+    static message(message)
+    {
+        ui.notifications.notify(this._moduleMessage(message));
+    }
+
     static errorPromise(message)
     {
         return new Promise(() =>
@@ -244,6 +249,10 @@ If you are the last or the second last combatant in the round the popcorn initia
         for (let i = 0; i < segments.length; i++)
         {
             obj = obj[segments[i]];
+            if (!obj)
+            {
+                return;
+            }
         }
 
         return obj;
@@ -312,6 +321,24 @@ If you are the last or the second last combatant in the round the popcorn initia
         }
 
         return combatant.img;
+    }
+
+    static getActorIcon(actorId, type)
+    {
+        const actor = game.actors.get(actorId);
+        if (actor)
+        {
+            if (type === Constants.CombatantImageType.actor.id)
+            {
+                return actor.img;
+            }
+            else if (type === Constants.CombatantImageType.token.id)
+            {
+                return actor.prototypeToken.texture.src;
+            }
+        }
+
+        return "";
     }
 }
 

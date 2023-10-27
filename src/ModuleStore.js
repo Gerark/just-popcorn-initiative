@@ -16,6 +16,7 @@ export const canSelectWhenRoundIsOver = writable(true);
 export const canLastActorSelectThemselves = writable(false);
 export const overrideEndTurnButton = writable(true);
 export const settings = writable([]);
+export const currentActorPreview = writable(null);
 
 export const isAnyCombatantSelected = derived(selectableCombatants, ($selectableCombatants) =>
 {

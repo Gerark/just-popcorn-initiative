@@ -1,7 +1,6 @@
 <script>
     import { getContext } from "svelte";
     import { ApplicationShell } from '#runtime/svelte/component/core';
-    import { settings } from "../../ModuleStore.js";
     import { Constants, locSettings } from "../../ModuleUtils.js";
     import { ModuleSettings } from "../../ModuleSettings.js";
 
@@ -10,11 +9,12 @@
         Theme,
         Flex,
         Button,
-        Label,
-        PropertyInspector,
-        PropertyInspectorValueStore
+        TabControl,
+        Typography
     } from "@gerark/just-svelte-lib/components";
     import { ModuleAPI } from "../../ModuleAPI.js";
+    import GeneralTab from "./GeneralTab.svelte";
+    import StatsTab from "./StatsTab.svelte";
 
     export let elementRoot;
 
@@ -56,15 +56,21 @@
 
 <ApplicationShell bind:elementRoot>
     <Theme theme="{$currentTheme}">
-        <Flex class="vertical thick scrollable" height="100%" width="100%" flex="{['1', '1, 1']}">
-            <div class="property-inspector-container">
-                <PropertyInspector height="100%" item="{$settings}" title="" --columns="1fr 2fr">
-                    <Label let:key slot="name">{$settings[key].label}</Label>
-                    <PropertyInspectorValueStore item="{$settings[key]}" let:key
-                                                 slot="value"></PropertyInspectorValueStore>
-                </PropertyInspector>
-            </div>
-            <Flex class="horizontal" height="auto">
+        <Flex class="vertical thick scrollable" height="100%" width="100%" flex="{['1', '0 0']}">
+            <Flex class="horizontal  clip-overflow" height="100%" min-height="50px" flex="{['1 0','0 0']}">
+                <TabControl>
+                    <svelte:fragment slot="header" let:tab>
+                        <Flex class="horizontal thin" width="auto">
+                            <Typography class="size-lg color-on-surface align-center" width="auto">{tab.header}
+                            </Typography>
+                            <i class="fa fa-{tab.icon}"></i>
+                        </Flex>
+                    </svelte:fragment>
+                    <GeneralTab></GeneralTab>
+                    <StatsTab></StatsTab>
+                </TabControl>
+            </Flex>
+            <Flex class="horizontal thick">
                 {#if !areCommonMacrosInstalled}
                     <Button class="btn secondary md" on:click={installMacro} width="50%"
                             tooltip="{locSettings(`${Constants.Options.InstallCommonMacros}-description`)}">
@@ -87,9 +93,4 @@
 </ApplicationShell>
 
 <style lang="scss">
-  .property-inspector-container {
-    width: 100%;
-    height: 100%;
-    min-height: 50px;
-  }
 </style>

@@ -1,7 +1,7 @@
 import { SvelteApplication } from '#runtime/svelte/application';
 
 import SelectionWindow from './SelectionWindow.svelte';
-import { ModuleUtils } from '../../ModuleUtils.js';
+import { locWindow, ModuleUtils } from '../../ModuleUtils.js';
 import { get as svelteGet } from "svelte/store";
 import { selectionWindowState, selectionWindowAnchor } from "../../ModuleStore.js";
 
@@ -16,10 +16,9 @@ export default class SelectionWindowApplication extends SvelteApplication
             // Attempt to parse client game setting and set application state.
             const app = this.state.get();
 
-
             const state = svelteGet(selectionWindowState);
             const anchor = svelteGet(selectionWindowAnchor);
-            const isEmptyState = Object.keys(state).length !== 0;
+            const isEmptyState = Object.keys(state).length === 0;
             if (!isEmptyState)
             {
                 app.position = state;
@@ -45,6 +44,7 @@ export default class SelectionWindowApplication extends SvelteApplication
         return foundry.utils.mergeObject(super.defaultOptions, {
             id: 'popcorn-initiative-overlay',
             classes: ['selection-window'],
+            title: locWindow("selection-window-title"),
             resizable: true,
             width: 450,
             height: 310,
