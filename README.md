@@ -5,7 +5,7 @@
 ![Foundry Verified Version](https://img.shields.io/badge/dynamic/json.svg?url=https%3A%2F%2Fgithub.com%2Fgerark%2Fjust-popcorn-initiative%2Freleases%2Flatest%2Fdownload%2Fmodule.json&label=Foundry%20Verified%20Version&query=$.compatibility.verified&colorB=orange&style=for-the-badge)
 ![Latest Version](https://img.shields.io/badge/dynamic/json.svg?url=https%3A%2F%2Fgithub.com%2Fgerark%2Fjust-popcorn-initiative%2Freleases%2Flatest%2Fdownload%2Fmodule.json&label=Latest%20Release&prefix=v&query=$.version&colorB=red&style=for-the-badge)
 
-<img src="docsRes/videos/base.gif" alt="drawing" width="600"/>
+<img src="docsRes/videos/base.gif" alt="drawing" width="800"/>
 
 ---
 
@@ -64,7 +64,7 @@ Accessible from the Module Settings or through the Selection Window Toolbar
 
 #### Stats
 
-<img src="docsRes/videos/stats.gif" alt="drawing" width="600"/>
+<img src="docsRes/videos/stats.gif" alt="drawing" width="800"/>
 
 In the Selection Window, it is possible to display a list of statistics for each actor. Each text is treated as HTML
 with just two additional markup elements:
@@ -95,7 +95,7 @@ with just two additional markup elements:
 
 You can select different themes from the Configuration Window
 
-<img src="docsRes/videos/themes.gif" alt="drawing" width="600"/>
+<img src="docsRes/videos/themes.gif" alt="drawing" width="800"/>
 
 ### Compatibility Issues
 
