@@ -44,16 +44,30 @@ The Selection Window is split into three sections:
 - Tools:
    - Several options designed to assist in selecting the next actor.
 
-### Settings
+### Configuration Window
+
+![configuration-window.png](docs%2Fpictures%2Fconfiguration-window.png)
+
+Accessible from the Module Settings or through the Selection Window Toolbar
 
 |                       Setting                       |                                                                                                                Description                                                                                                                |
 |:---------------------------------------------------:|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-|     Override "Next Turn" and "End Turn" button      |                                                    Turn on/off the overridden behaviour for those buttons in case they conflict or we want to use a macro to show the Selection Window                                                    |
+|          Override "Combat Tracker" buttons          |                                                    Turn on/off the overridden behaviour for those buttons in case they conflict or we want to use a macro to show the Selection Window                                                    |
 | Allow Self Selection at the start of the next round | Activate the option for a player to independently select themselves as the subsequent participant for consecutive rounds. This provides the player with the ability to maintain their position in the ongoing sequence if they so desire. |
 |              Let the Last actor choose              |                                                                                        Enable last actor to choose first combatant of next round.                                                                                         |
-|                Selection Window size                |                                                                                  Select the size of the window from these two presets. ( Normal, Mini )                                                                                   |
-|              Selection Window position              |                                                                                               Select the position of the selection window.                                                                                                |
-|                Install common Macros                |                                      New macros will be added to your libraries. One is used to select the next actor in the combat tracker and the other one used to open the configuration window                                       |
+|                   Combatant Icon                    |                                                                            Select if the Actor should be visualized with their token or their character image                                                                             |
+|              Selection Window position              |                                                                    Select the position of the selection window. Use **Free** to save the position to its last location                                                                    |
+|                    Current Theme                    |                                                                                                   Change the UI style of this extension                                                                                                   |
+
+Install Macros Button
+
+New macros will be added to your libraries. One is used to select the next actor in the combat tracker and the other one
+used to open the configuration window
+
+### Themes
+
+You can select different themes from the Configuration Window
+[popcornV1.1.mp4](docs%2Fvideos%2FpopcornV1.1.mp4)
 
 ### Compatibility Issues
 
